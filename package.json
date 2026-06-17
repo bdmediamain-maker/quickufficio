@@ -47,7 +47,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "sharp",
-      "esbuild",
+      "esbuild"
+    ],
+    "ignoredBuiltDependencies": [
       "@parcel/watcher"
     ]
   }
