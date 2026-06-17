@@ -1,0 +1,49 @@
+---
+interface Props {
+  name: string;
+  id?: string;
+  value?: string;
+  required?: boolean;
+  checked?: boolean;
+  class?: string;
+}
+
+const { name, id = name, value = 'on', required = false, checked = false, class: className = '' } = Astro.props;
+---
+<label
+  for={id}
+  class={`group inline-flex items-start gap-3 cursor-pointer ${className}`}
+  style="font-family: 'DM Sans', sans-serif;"
+>
+  <span class="relative flex h-6 w-6 shrink-0 mt-0.5 items-center justify-center rounded-lg bg-clay-input-bg transition-all duration-200 group-hover:scale-105"
+        style="box-shadow: var(--shadow-clay-pressed);">
+    <input
+      type="checkbox"
+      id={id}
+      name={name}
+      value={value}
+      required={required}
+      checked={checked}
+      class="peer absolute inset-0 opacity-0 cursor-pointer"
+    />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="white"
+      stroke-width="3.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="h-4 w-4 opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+    <span
+      class="absolute inset-0 rounded-lg clay-button-primary opacity-0 peer-checked:opacity-100 transition-opacity duration-150 -z-10"
+      aria-hidden="true"
+    ></span>
+  </span>
+  <span class="text-sm text-clay-foreground leading-relaxed font-medium">
+    <slot />
+  </span>
+</label>

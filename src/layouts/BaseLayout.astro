@@ -1,0 +1,324 @@
+---
+import '~/styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = 'Software gestionali e hardware professionali per Hotel, Ristoranti, Bar, B&B e Pizzerie. 20 anni di esperienza Ho.Re.Ca, assistenza 7/7, made in Italy.',
+  ogImage = '/images/og/default.png',
+  canonical,
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title.includes('Quickufficio') ? title : `${title} · Quickufficio`;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'https://quickufficio.com').toString();
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#800080" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    {/* Preload logo per evitare flash nel preloader */}
+    <link rel="preload" as="image" href="/images/brand/logo-128.webp" type="image/webp" fetchpriority="high" />
+
+    {/* CSS critico preloader — inline per render immediato senza FOUC */}
+    <style is:inline>
+      /* Hidden di default — mostrato dal JS solo se la flag di sessione NON è presente */
+      #site-preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        background: #FFFFFF;
+        transition: opacity 0.45s ease-out, visibility 0.45s ease-out;
+      }
+      #site-preloader.is-running {
+        display: flex;
+      }
+      #site-preloader.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #site-preloader-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        animation: preloader-pulse 2s ease-in-out infinite;
+      }
+      #site-preloader-bar-wrap {
+        width: min(280px, 70vw);
+        height: 4px;
+        background: #F5EDF7;
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: inset 2px 2px 4px rgba(120,90,140,0.18), inset -2px -2px 4px rgba(255,255,255,0.9);
+      }
+      #site-preloader-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #C04ECF, #800080);
+        border-radius: 999px;
+        transition: width 0.18s ease-out;
+      }
+      #site-preloader-percent {
+        font-family: Nunito, -apple-system, system-ui, sans-serif;
+        font-weight: 900;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        color: #800080;
+        font-variant-numeric: tabular-nums;
+      }
+      @keyframes preloader-pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50%      { transform: scale(1.06); opacity: 0.92; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #site-preloader-logo { animation: none; }
+        #site-preloader { transition-duration: 0.15s; }
+        #site-preloader-bar { transition-duration: 0.05s; }
+      }
+      /* Lock body scroll mentre preloader visibile */
+      body.preloader-active { overflow: hidden; }
+    </style>
+
+    {/* JS preloader — sessione-aware. Mostra+anima solo se la flag NON è in sessione.
+        Compatibile con View Transitions Astro: gestisce astro:page-load e astro:after-swap. */}
+    <script is:inline>
+      (function () {
+        var DURATION = 1200;
+        var FADE = 450;
+        var STEP = 16;
+        var hasRun = false; // evita doppia esecuzione
+
+        function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+        function removeNode() {
+          var el = document.getElementById('site-preloader');
+          if (el && el.parentNode) el.parentNode.removeChild(el);
+        }
+
+        function hideIfSeen() {
+          // Se la sessione ha già visto il preloader, rimuovilo subito (caso View Transitions)
+          if (sessionStorage.getItem('qu-preloader-seen')) {
+            removeNode();
+            document.body && document.body.classList.remove('preloader-active');
+            return true;
+          }
+          return false;
+        }
+
+        function runPreloader() {
+          // Skip se già completato o già in esecuzione in questa pagina
+          if (hasRun) return;
+          if (hideIfSeen()) return;
+          var el = document.getElementById('site-preloader');
+          if (!el) return;
+
+          hasRun = true;
+          el.classList.add('is-running');
+          document.body.classList.add('preloader-active');
+          document.documentElement.classList.add('qu-preloader-shown');
+
+          var startTime = Date.now();
+          var intervalId;
+
+          function tick() {
+            var elapsed = Date.now() - startTime;
+            var t = Math.min(1, elapsed / DURATION);
+            var progress = easeOutCubic(t) * 100;
+            var bar = document.getElementById('site-preloader-bar');
+            var pct = document.getElementById('site-preloader-percent');
+            if (bar) bar.style.width = progress.toFixed(1) + '%';
+            if (pct) pct.textContent = Math.round(progress) + '%';
+            if (t >= 1) {
+              clearInterval(intervalId);
+              finish();
+            }
+          }
+
+          function finish() {
+            el.classList.add('is-hidden');
+            document.body.classList.remove('preloader-active');
+            sessionStorage.setItem('qu-preloader-seen', '1');
+            setTimeout(removeNode, FADE);
+          }
+
+          tick();
+          intervalId = setInterval(tick, STEP);
+        }
+
+        function init() {
+          // Su navigazioni View Transitions: rimuovi subito il preloader markup
+          if (hideIfSeen()) return;
+          // Prima visita di sessione: avvia animazione
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', runPreloader, { once: true });
+          } else {
+            runPreloader();
+          }
+        }
+
+        init();
+
+        // Hook View Transitions Astro — re-applica il check su ogni swap
+        document.addEventListener('astro:after-swap', function () {
+          hasRun = false; // reset per la nuova pagina (anche se non dovrebbe più animare)
+          hideIfSeen();
+        });
+      })();
+    </script>
+
+    {/* Open Graph */}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site ?? 'https://quickufficio.com').toString()} />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:site_name" content="Quickufficio" />
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site ?? 'https://quickufficio.com').toString()} />
+
+    {/* JSON-LD Organization + LocalBusiness — globale su ogni pagina */}
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': 'https://quickufficio.com/#localbusiness',
+      name: 'Quickufficio.com Srls',
+      url: 'https://quickufficio.com',
+      logo: 'https://quickufficio.com/images/brand/logo-512.png',
+      image: 'https://quickufficio.com/images/brand/logo-512.png',
+      description: 'Software gestionali e hardware professionali per Hotel, Ristoranti, Bar, B&B, Pizzerie. 20 anni di esperienza Ho.Re.Ca italiano.',
+      telephone: '+390122675000',
+      email: 'info@quickufficio.com',
+      priceRange: '€€',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Susa',
+        addressRegion: 'TO',
+        addressCountry: 'IT',
+      },
+      areaServed: { '@type': 'Country', name: 'Italia' },
+      openingHoursSpecification: [{
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '09:00', closes: '18:00',
+      }],
+      sameAs: [],
+    })} />
+
+    {/* View Transitions Astro — smooth fade tra pagine, gestisce data-reveal re-init */}
+    <ClientRouter />
+
+    <slot name="head" />
+  </head>
+  <body>
+    {/* Preloader — markup minimo, JS inline gestisce showing/hide. Solo se non già visto in sessione (gestito dallo script in head) */}
+    <div id="site-preloader" role="status" aria-live="polite" aria-label="Caricamento sito in corso">
+      <picture>
+        <source type="image/webp" srcset="/images/brand/logo-128.webp" />
+        <img
+          id="site-preloader-logo"
+          src="/images/brand/logo-128.png"
+          alt="Quickufficio"
+          width="80"
+          height="80"
+          decoding="async"
+        />
+      </picture>
+      <div id="site-preloader-bar-wrap" aria-hidden="true">
+        <div id="site-preloader-bar"></div>
+      </div>
+      <span id="site-preloader-percent">0%</span>
+    </div>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-clay-foreground focus:text-clay-canvas focus:rounded-lg">
+      Salta al contenuto
+    </a>
+    <slot />
+
+    {/* IntersectionObserver per data-reveal — fade-up al primo ingresso nel viewport */}
+    <script is:inline>
+      (function () {
+        function isInViewport(el) {
+          var r = el.getBoundingClientRect();
+          var vh = window.innerHeight || document.documentElement.clientHeight;
+          return r.top < vh * 0.92 && r.bottom > 0;
+        }
+        function revealVisible() {
+          // Mark immediately any element already visible in viewport
+          document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach(function (el) {
+            if (isInViewport(el)) el.classList.add('is-visible');
+          });
+        }
+        function initReveal() {
+          // Fallback se IntersectionObserver non disponibile o non funziona
+          if (typeof IntersectionObserver === 'undefined') {
+            document.querySelectorAll('[data-reveal]').forEach(function (el) {
+              el.classList.add('is-visible');
+            });
+            return;
+          }
+          // Prima rivela quelli già in viewport (initial paint smoother)
+          revealVisible();
+          // Poi osserva il resto per lo scroll
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
+          );
+          document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach(function (el) {
+            observer.observe(el);
+          });
+          // Scroll fallback (in caso IntersectionObserver non firi, es. iframe)
+          var scrollListener = function () {
+            revealVisible();
+          };
+          window.addEventListener('scroll', scrollListener, { passive: true });
+          window.addEventListener('resize', scrollListener, { passive: true });
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initReveal, { once: true });
+        } else {
+          initReveal();
+        }
+        // Re-init dopo navigazione View Transitions
+        document.addEventListener('astro:page-load', initReveal);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+---
+interface Props {
+  type?: 'text' | 'email' | 'tel' | 'url' | 'number' | 'date';
+  name: string;
+  id?: string;
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  required?: boolean;
+  autocomplete?: string;
+  pattern?: string;
+  inputmode?: 'text' | 'email' | 'tel' | 'numeric' | 'decimal' | 'url';
+  hint?: string;
+  class?: string;
+}
+
+const {
+  type = 'text',
+  name,
+  id = name,
+  label,
+  placeholder,
+  value,
+  required = false,
+  autocomplete,
+  pattern,
+  inputmode,
+  hint,
+  class: className = '',
+} = Astro.props;
+---
+<div class={`flex flex-col gap-2 ${className}`}>
+  {label && (
+    <label
+      for={id}
+      class="font-medium text-sm text-clay-foreground"
+      style="font-family: 'DM Sans', sans-serif;"
+    >
+      {label}{required && <span class="text-clay-accent ml-0.5" aria-hidden="true">*</span>}
+    </label>
+  )}
+  <input
+    type={type}
+    id={id}
+    name={name}
+    placeholder={placeholder}
+    value={value}
+    required={required}
+    autocomplete={autocomplete}
+    pattern={pattern}
+    inputmode={inputmode}
+    aria-describedby={hint ? `${id}-hint` : undefined}
+    class="w-full h-14 px-5 rounded-2xl bg-clay-input-bg text-clay-foreground placeholder:text-clay-muted/60 font-medium focus:bg-white focus:outline-none focus:ring-4 focus:ring-clay-accent/20 transition-all duration-200"
+    style={`box-shadow: var(--shadow-clay-pressed); font-family: 'DM Sans', sans-serif;`}
+  />
+  {hint && (
+    <p id={`${id}-hint`} class="text-xs text-clay-muted leading-relaxed">{hint}</p>
+  )}
+</div>

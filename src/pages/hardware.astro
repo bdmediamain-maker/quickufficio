@@ -1,0 +1,103 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import ProductCategoryFilter from '~/components/product/ProductCategoryFilter.tsx';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import { icons } from '~/lib/icons';
+import BookingEmbed from '~/components/sections/BookingEmbed.astro';
+import CTABanner from '~/components/sections/CTABanner.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import { getCollection } from 'astro:content';
+
+const productsAll = await getCollection('products');
+const products = productsAll.map((p) => ({
+  href: `/prodotti/${p.id.replace(/\.mdx$/, '')}`,
+  title: p.data.title,
+  brand: p.data.brand,
+  category: p.data.category,
+  image: p.data.image,
+  imageAlt: p.data.imageAlt,
+  shortDescription: p.data.shortDescription,
+  available: p.data.available,
+}));
+
+const categories = Array.from(new Set(products.map((p) => p.category))).sort();
+---
+<PageLayout
+  title="Hardware professionale Ho.Re.Ca — POS, RT, Kiosk, palmari, serrature smart"
+  description="Catalogo hardware professionale per ristoranti e hotel: POS Lasersoft, Registratori Telematici Eden, kiosk autoservizio, palmari Android, serrature smart, stampanti termiche. Installazione e supporto inclusi."
+  blobs="sunset"
+>
+  <ClayHero
+    badge="Hardware professionale"
+    title="L'hardware professionale per la tua attività"
+    highlight="professionale"
+    subtitle="Selezioniamo, installiamo e supportiamo solo hardware che funziona davvero in ambienti Ho.Re.Ca: resistente, integrato col gestionale, garantito 24 mesi."
+    primaryCta={{ label: 'Parla con Sergio', href: '/prenota-demo' }}
+    secondaryCta={{ label: 'Chiama 0122 675000', href: 'tel:+390122675000', variant: 'ghost' }}
+    backgroundImage="/images/hero/hardware"
+    backgroundAlt="POS terminal e hardware professionale Ho.Re.Ca in funzione"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="Tecnologia che dura"
+    title="Hardware Ho.Re.Ca, non elettronica di consumo"
+    highlight="non elettronica"
+    paragraphs={[
+      "I POS che vendiamo nascono per resistere al calore della cucina, agli sversamenti del bar, al ritmo del servizio. Niente componenti di plastica, niente ventole rumorose, niente fragilità.",
+      "Lavoriamo con Lasersoft, Eden e ASUS Business: marchi italiani e internazionali con storia, ricambi pluriennali garantiti e supporto raggiungibile.",
+    ]}
+    image="/images/page-cards/hardware-card"
+    imageAlt="Touchscreen POS in uso da operatore al bancone"
+    imageSide="right"
+    cta={{ label: 'Richiedi consulenza', href: '/prenota-demo' }}
+  />
+
+  <section class="container-clay py-10 sm:py-14 lg:py-16">
+    <ProductCategoryFilter products={products} categories={categories} client:load />
+  </section>
+
+  <StackingCards
+    badge="Come scegliamo l'hardware"
+    title="Tre cose che NON troverai mai da noi"
+    highlight="NON troverai mai"
+    subtitle="Scelta dell'hardware non è una commodity. Scrolla per vedere il nostro filtro."
+    cards={[
+      {
+        title: 'Niente plastica fragile da elettronica di consumo',
+        description: "I POS che selezioniamo nascono per durare 5-7 anni in cucina e al bancone. Niente touchscreen che si fessurano dopo 6 mesi, niente porte che si rompono al primo sversamento.",
+        icon: icons.shield,
+        variant: 'copper',
+      },
+      {
+        title: 'Niente marchi cinesi senza supporto post-vendita',
+        description: "Lavoriamo solo con Lasersoft, Eden, ASUS Business: ricambi pluriennali garantiti, firmware aggiornati per anni, supporto telefonico raggiungibile in giornata.",
+        icon: icons.refreshCw,
+        variant: 'sage',
+      },
+      {
+        title: "Niente vendita senza sopralluogo in struttura",
+        description: "Prima di proporre POS, RT o kiosk veniamo a vedere il tuo spazio. Misuriamo, valutiamo flussi, integriamo con quello che già funziona. Solo dopo, preventivo.",
+        icon: icons.headphones,
+        variant: 'bordeaux',
+        cta: { label: 'Prenota sopralluogo', href: '/prenota-demo' },
+      },
+    ]}
+  />
+
+  <CTABanner
+    title="Hai bisogno di consigli sull'hardware giusto?"
+    subtitle="Sergio ti aiuta a scegliere in base a dimensione e tipo di attività. Niente vendita forzata: solo l'hardware che ti serve davvero."
+    variant="gradient"
+    primaryCta={{ label: 'Prenota consulenza', href: '/prenota-demo' }}
+    secondaryCta={{ label: 'Chiama 0122 675000', href: 'tel:+390122675000' }}
+  />
+
+  <ContactForm
+    origin="hardware"
+    title="Richiedi un preventivo hardware"
+    subtitle="Dicci che tipo di attività hai e il volume tipico: prepariamo una proposta calibrata."
+  />
+</PageLayout>

@@ -1,0 +1,82 @@
+---
+import IconOrb from '~/components/ui/IconOrb.astro';
+
+interface Module {
+  title: string;
+  description: string;
+  icon?: string;
+}
+interface Group {
+  title: string;
+  description?: string;
+  modules: Module[];
+  variant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta';
+}
+interface Props {
+  title?: string;
+  subtitle?: string;
+  groups: Group[];
+}
+
+const { title, subtitle, groups } = Astro.props;
+const fallback = ['copper', 'bordeaux', 'sage', 'gold'] as const;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  {(title || subtitle) && (
+    <div class="max-w-3xl mb-8 sm:mb-12 lg:mb-16">
+      {title && (
+        <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+
+  <div data-reveal-stagger class="grid gap-6 sm:gap-8 lg:grid-cols-2">
+    {groups.map((group, gi) => {
+      const variant = group.variant ?? fallback[gi % fallback.length];
+      return (
+        <div
+          data-reveal
+          class="glass-clay rounded-[32px] p-5 sm:p-6 lg:p-8 flex flex-col gap-6"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <header class="flex items-start gap-4">
+            <IconOrb variant={variant} size="md" shape="rounded">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/>
+                <rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>
+              </svg>
+            </IconOrb>
+            <div>
+              <h3 class="text-2xl sm:text-3xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">{group.title}</h3>
+              {group.description && <p class="mt-1 text-sm text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">{group.description}</p>}
+            </div>
+          </header>
+          <ul class="flex flex-col gap-2">
+            {group.modules.map((m) => (
+              <li>
+                <details class="group rounded-2xl bg-clay-canvas/60 overflow-hidden transition-colors duration-300 open:bg-clay-canvas open:shadow-[var(--shadow-clay-pressed)]">
+                  <summary class="flex items-center justify-between gap-4 px-4 py-3 cursor-pointer list-none">
+                    <span class="font-bold text-clay-foreground" style="font-family: Nunito, sans-serif;">{m.title}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-clay-muted transition-transform duration-300 group-open:rotate-180" aria-hidden="true">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </summary>
+                  <div class="px-4 pb-4">
+                    <p class="text-sm text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">{m.description}</p>
+                  </div>
+                </details>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    })}
+  </div>
+</section>

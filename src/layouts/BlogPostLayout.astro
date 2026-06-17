@@ -1,0 +1,212 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '~/components/layout/Header.astro';
+import Footer from '~/components/layout/Footer.astro';
+import StickyCTA from '~/components/layout/StickyCTA.astro';
+import ClayBlobs from '~/components/layout/ClayBlobs.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+import ClayButton from '~/components/ui/ClayButton.astro';
+import BlogCard from '~/components/sections/BlogCard.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  readingMinutes: number;
+}
+
+const { post, readingMinutes } = Astro.props;
+const { data } = post;
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const related = allPosts
+  .filter((p) => p.id !== post.id && p.data.category === data.category)
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 3);
+
+const dateFormatted = data.publishDate.toLocaleDateString('it-IT', {
+  day: 'numeric', month: 'long', year: 'numeric',
+});
+
+const ogImage = data.cover ?? '/images/og/default.png';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: data.title,
+  description: data.excerpt,
+  datePublished: data.publishDate.toISOString(),
+  dateModified: (data.updateDate ?? data.publishDate).toISOString(),
+  author: { '@type': 'Person', name: data.author },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Quickufficio.com Srls',
+    url: 'https://quickufficio.com',
+  },
+  image: new URL(ogImage, Astro.site ?? 'https://quickufficio.com').toString(),
+  mainEntityOfPage: { '@type': 'WebPage', '@id': Astro.url.toString() },
+};
+---
+<BaseLayout
+  title={`${data.seoTitle ?? data.title}`}
+  description={data.seoDescription ?? data.excerpt}
+  ogImage={ogImage}
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  </Fragment>
+  <ClayBlobs scheme="warm" count={4} />
+  <Header />
+  <main id="main" class="relative pt-24 sm:pt-28 pb-24 lg:pb-12">
+    <article class="container-clay py-8">
+      <Breadcrumbs items={[
+        { label: 'Home', href: '/' },
+        { label: 'Blog', href: '/blog' },
+        { label: data.title },
+      ]} class="mb-8" />
+
+      <header class="max-w-3xl mx-auto text-center mb-12">
+        <ClayBadge variant="copper" size="md" class="mb-6">{data.category}</ClayBadge>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1]" style="font-family: Nunito, sans-serif;">
+          {data.title}
+        </h1>
+        <p class="mt-6 text-lg sm:text-xl text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {data.excerpt}
+        </p>
+        <div class="mt-6 flex items-center justify-center gap-4 text-sm text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;">
+          <span><strong class="text-clay-foreground">{data.author}</strong></span>
+          <span aria-hidden="true">·</span>
+          <time datetime={data.publishDate.toISOString()}>{dateFormatted}</time>
+          <span aria-hidden="true">·</span>
+          <span>{readingMinutes} min lettura</span>
+        </div>
+      </header>
+
+      {data.cover && (
+        <div class="max-w-4xl mx-auto mb-12">
+          <div
+            class="relative aspect-[16/9] rounded-[32px] overflow-hidden bg-clay-input-bg"
+            style="box-shadow: var(--shadow-clay-card);"
+          >
+            <img src={data.cover} alt={data.coverAlt ?? data.title} class="absolute inset-0 h-full w-full object-cover" loading="eager" />
+          </div>
+        </div>
+      )}
+
+      <div class="max-w-3xl mx-auto">
+        <div
+          class="prose prose-clay prose-lg max-w-none"
+          style="font-family: 'DM Sans', sans-serif;"
+        >
+          <slot />
+        </div>
+
+        <aside
+          class="mt-16 p-5 sm:p-6 lg:p-8 lg:p-10 rounded-[32px] glass-clay text-center"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-3" style="font-family: Nunito, sans-serif;">
+            Ti è stato utile?
+          </h2>
+          <p class="text-clay-muted leading-relaxed font-medium mb-6" style="font-family: 'DM Sans', sans-serif;">
+            Se vuoi vedere come funziona nella pratica, Sergio fa una demo gratuita di 30-60 minuti — senza venditori e senza impegno.
+          </p>
+          <div class="flex flex-wrap justify-center gap-3">
+            <ClayButton href="/prenota-demo" variant="primary" size="md">Prenota demo</ClayButton>
+            <ClayButton href="tel:+390122675000" variant="ghost" size="md">Chiama 0122 675000</ClayButton>
+          </div>
+        </aside>
+      </div>
+    </article>
+
+    {related.length > 0 && (
+      <section class="container-clay py-10 sm:py-16 lg:py-24">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-10" style="font-family: Nunito, sans-serif;">
+          Articoli correlati
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {related.map((p) => (
+            <BlogCard
+              href={`/blog/${p.id}`}
+              title={p.data.title}
+              excerpt={p.data.excerpt}
+              category={p.data.category}
+              publishDate={p.data.publishDate}
+              cover={p.data.cover}
+              coverAlt={p.data.coverAlt}
+              author={p.data.author}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+  <Footer />
+  <StickyCTA />
+</BaseLayout>
+
+<style is:global>
+  .prose-clay h2 {
+    font-family: Nunito, sans-serif;
+    font-weight: 800;
+    color: var(--color-clay-foreground);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.875rem;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .prose-clay h3 {
+    font-family: Nunito, sans-serif;
+    font-weight: 800;
+    color: var(--color-clay-foreground);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+  }
+  .prose-clay p {
+    color: var(--color-clay-foreground);
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+    font-weight: 400;
+  }
+  .prose-clay strong { color: var(--color-clay-foreground); font-weight: 700; }
+  .prose-clay a {
+    color: var(--color-clay-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+  }
+  .prose-clay a:hover { text-decoration: none; }
+  .prose-clay ul, .prose-clay ol {
+    margin-top: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+  .prose-clay ul { list-style: none; padding-left: 0; }
+  .prose-clay ul li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+  }
+  .prose-clay ul li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--color-clay-accent);
+    font-weight: 700;
+  }
+  .prose-clay ol li { margin-bottom: 0.5rem; line-height: 1.7; }
+  .prose-clay hr {
+    border-color: rgba(42, 37, 32, 0.12);
+    margin: 2.5rem 0;
+  }
+  .prose-clay blockquote {
+    border-left: 4px solid var(--color-clay-accent);
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--color-clay-muted);
+  }
+</style>

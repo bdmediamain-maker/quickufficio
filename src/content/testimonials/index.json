@@ -1,0 +1,42 @@
+[
+  {
+    "id": "paola-osteria-del-conte",
+    "name": "Paola",
+    "role": "Titolare",
+    "business": "Osteria del Conte",
+    "location": "Italia",
+    "quote": "Da quando lavoriamo con Sergio abbiamo il controllo dei costi e siamo molto più tranquilli sulla gestione della cassa. Sergio è sempre disponibile, soprattutto nei momenti di emergenza.",
+    "extendedQuote": "Da quando lavoriamo con Sergio e Quickufficio abbiamo finalmente il controllo dei costi della nostra osteria. Abbiamo ridotto gli errori in cassa, gli ordini ai fornitori sono diventati più semplici e il personale ha imparato a usare il sistema in poco tempo. Quello che fa davvero la differenza è la disponibilità: Sergio risponde sempre, anche di sabato sera quando capita un problema in pieno servizio.",
+    "avatar": "/images/legacy/testimonials/paola-avatar.png",
+    "photo": "/images/legacy/testimonials/paola-extended.jpg",
+    "verified": true,
+    "featured": true,
+    "sectors": ["Ristoranti"]
+  },
+  {
+    "id": "marco-hotel-placeholder",
+    "name": "Marco",
+    "role": "Direttore",
+    "business": "Hotel [da confermare]",
+    "location": "Italia",
+    "quote": "Con Hotel Automation Cloud abbiamo riportato le prenotazioni dirette dal 25% al 55% in un anno. Le commissioni Booking risparmiate hanno ripagato il software 4 volte. E quando ho un dubbio, basta una telefonata.",
+    "extendedQuote": "Quando ho iniziato a lavorare con Sergio, il nostro hotel di 22 camere viveva al 70% di prenotazioni Booking.com. Significava regalare 18 mila euro all'anno di commissioni. Con il booking engine sul sito, il channel manager sincronizzato e una campagna email post-soggiorno strutturata, in 14 mesi siamo passati a 55% dirette. La cosa che apprezzo di più non è il software in sé, ma il fatto che Sergio mi richiama sempre — anche per dirmi che un aggiornamento mi farà comodo prima che me ne accorga io.",
+    "avatar": "/images/testimonials/marco-avatar.png",
+    "verified": false,
+    "featured": false,
+    "sectors": ["Hotel"]
+  },
+  {
+    "id": "laura-bar-placeholder",
+    "name": "Laura",
+    "role": "Titolare",
+    "business": "Bar / Pasticceria [da confermare]",
+    "location": "Italia",
+    "quote": "L'app My Self Order ha cambiato il nostro modo di lavorare la domenica mattina. Niente più code al banco, ticket medio cresciuto, e il personale può concentrarsi su servizio e qualità invece che battere comande di fretta.",
+    "extendedQuote": "Avevamo problemi di gestione del banco la domenica mattina: 200 colazioni in 90 minuti, cassiera in apnea, errori di battitura, clienti che lasciavano la coda. Sergio ci ha proposto My Self Order: i clienti ordinano dal tavolo col QR, pagano in cassa solo all'uscita, e la cucina riceve gli ordini in tempo reale. Risultato dopo 3 mesi: -50% tempo medio servizio, ticket medio +18%, e per la prima volta in 6 anni la cassiera ha il tempo di sorridere ai clienti.",
+    "avatar": "/images/testimonials/laura-avatar.png",
+    "verified": false,
+    "featured": false,
+    "sectors": ["Bar"]
+  }
+]

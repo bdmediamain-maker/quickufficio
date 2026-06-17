@@ -1,0 +1,65 @@
+---
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  publishDate: Date;
+  cover?: string;
+  coverAlt?: string;
+  author?: string;
+  readingMinutes?: number;
+}
+
+const { href, title, excerpt, category, publishDate, cover, coverAlt, author = 'Sergio', readingMinutes } = Astro.props;
+
+const dateFormatted = publishDate.toLocaleDateString('it-IT', {
+  day: 'numeric', month: 'long', year: 'numeric',
+});
+
+const variants: Record<string, 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream'> = {
+  Hotel: 'bordeaux',
+  Ristoranti: 'sage',
+  Hardware: 'copper',
+  'Marketing Ho.Re.Ca': 'gold',
+  Normative: 'cream',
+};
+const variant = variants[category] ?? 'copper';
+---
+<a
+  data-reveal
+  href={href}
+  class="group flex flex-col glass-clay rounded-[32px] overflow-hidden transition-all duration-500 hover:-translate-y-3"
+  style="box-shadow: var(--shadow-clay-card);"
+>
+  {cover ? (
+    <div class="relative aspect-[16/10] bg-clay-input-bg overflow-hidden">
+      <img src={cover} alt={coverAlt ?? title} class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+    </div>
+  ) : (
+    <div class="relative aspect-[16/10] clay-orb-cream flex items-center justify-center">
+      <span class="text-6xl font-black text-clay-foreground/30" style="font-family: Nunito, sans-serif;" aria-hidden="true">Q</span>
+    </div>
+  )}
+  <div class="p-6 sm:p-7 flex flex-col gap-3 flex-1">
+    <div class="flex items-center justify-between gap-3">
+      <ClayBadge variant={variant} size="sm">{category}</ClayBadge>
+      {readingMinutes && (
+        <span class="text-xs text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {readingMinutes} min lettura
+        </span>
+      )}
+    </div>
+    <h3 class="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight group-hover:text-clay-accent transition-colors" style="font-family: Nunito, sans-serif;">
+      {title}
+    </h3>
+    <p class="text-sm text-clay-muted leading-relaxed font-medium flex-1" style="font-family: 'DM Sans', sans-serif;">
+      {excerpt}
+    </p>
+    <p class="text-xs text-clay-muted font-medium mt-auto" style="font-family: 'DM Sans', sans-serif;">
+      {author} · {dateFormatted}
+    </p>
+  </div>
+</a>

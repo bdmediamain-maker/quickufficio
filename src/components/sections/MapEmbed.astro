@@ -1,0 +1,47 @@
+---
+interface Props {
+  /** Coordinate del centro mappa */
+  lat?: number;
+  lng?: number;
+  zoom?: number;
+  title?: string;
+  address?: string;
+}
+const {
+  lat = 45.137,
+  lng = 7.045,
+  zoom = 14,
+  title = 'Quickufficio.com Srls — Susa (TO)',
+  address = 'Susa, Torino — Italia',
+} = Astro.props;
+
+const bbox = `${lng - 0.02},${lat - 0.01},${lng + 0.02},${lat + 0.01}`;
+const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  <div
+    class="overflow-hidden rounded-[40px] sm:rounded-[60px] grid lg:grid-cols-12"
+    style="box-shadow: var(--shadow-clay-surface);"
+  >
+    <div class="lg:col-span-4 p-5 sm:p-6 lg:p-8 lg:p-12 bg-clay-canvas flex flex-col justify-center gap-4">
+      <h2 class="text-3xl sm:text-4xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">
+        Vieni a trovarci
+      </h2>
+      <p class="text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+        {title}<br/>
+        {address}
+      </p>
+      <p class="text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;">
+        Per appuntamenti in sede chiama prima.
+      </p>
+    </div>
+    <div class="lg:col-span-8 bg-clay-input-bg relative min-h-[320px] lg:min-h-[480px]">
+      <iframe
+        src={src}
+        loading="lazy"
+        title={`Mappa: ${title}`}
+        class="absolute inset-0 h-full w-full border-0"
+      ></iframe>
+    </div>
+  </div>
+</section>

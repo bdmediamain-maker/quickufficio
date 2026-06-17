@@ -1,0 +1,199 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import StatOrbs from '~/components/sections/StatOrbs.astro';
+import BentoFeatures from '~/components/sections/BentoFeatures.astro';
+import StorySection from '~/components/sections/StorySection.astro';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import ModuleAccordion from '~/components/sections/ModuleAccordion.astro';
+import CaseStudyCard from '~/components/sections/CaseStudyCard.astro';
+import IntegrationLogos from '~/components/sections/IntegrationLogos.astro';
+import BookingEmbed from '~/components/sections/BookingEmbed.astro';
+import FAQ from '~/components/sections/FAQ.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import { icons } from '~/lib/icons';
+import { getCollection } from 'astro:content';
+
+const modulesAll = await getCollection('modules', ({ data }) => data.sector === 'Ristoranti');
+modulesAll.sort((a, b) => a.data.order - b.data.order);
+
+// Raggruppa per "group"
+const groupOrder = ['Vendita & Cassa', 'Cliente & Ordini', 'Marketing & Fidelity', 'Operations'];
+const groups = groupOrder.map((groupTitle, gi) => ({
+  title: groupTitle,
+  variant: (['copper', 'sage', 'gold', 'bordeaux'] as const)[gi % 4],
+  modules: modulesAll
+    .filter((m) => m.data.group === groupTitle)
+    .map((m) => ({ title: m.data.title, description: m.data.shortDescription })),
+}));
+
+const stats = [
+  { value: '+22%',     label: 'Ticket medio dopo My Self Order',   variant: 'copper' as const },
+  { value: '-40%',     label: 'Errori cassa con kitchen monitor',  variant: 'sage' as const },
+  { value: '< 1h',     label: 'Tempi setup tipici in struttura',   variant: 'bordeaux' as const },
+  { value: '7/7',      label: 'Assistenza Sergio',                 variant: 'gold' as const },
+];
+
+const features = [
+  {
+    title: 'Tutto-in-uno, davvero',
+    description: "Una sola piattaforma per cassa, comande, magazzino, food cost, fidelity, asporto, prenotazione tavoli. Niente integrazioni che si rompono, niente doppi inserimenti.",
+    icon: icons.chefHat,
+    iconVariant: 'sage' as const,
+    image: '/images/legacy/ristoranti/foto2.png',
+    imageAlt: 'Ristorante automatizzato con gestionale Lasersoft in cassa',
+    large: true,
+  },
+  {
+    title: 'Kitchen monitor',
+    description: 'Display 21" in cucina sostituisce la stampante: ordini in tempo reale, tempi di preparazione tracciati, niente carta.',
+    icon: icons.monitor,
+    iconVariant: 'copper' as const,
+  },
+  {
+    title: 'My Self Order',
+    description: "Menu QR code: l'ospite ordina dal suo cellulare. Riduce attese e fa aumentare il ticket medio del 15-22%.",
+    icon: icons.qrCode,
+    iconVariant: 'gold' as const,
+    href: '/my-self-order',
+  },
+  {
+    title: 'Integrazione delivery',
+    description: 'Booking, Glovo, Just Eat, Uber Eats, Deliveroo: ordini centralizzati in cassa, niente tablet sparsi.',
+    icon: icons.shoppingBag,
+    iconVariant: 'bordeaux' as const,
+  },
+  {
+    title: 'Food cost reale',
+    description: 'Ricette con grammature, costi materie prime, margine per piatto. Scopri cosa ti rende davvero — e cosa ti costa.',
+    icon: icons.trendingUp,
+    iconVariant: 'terracotta' as const,
+  },
+];
+
+const deliveryLogos = [
+  { name: 'Booking.com',  short: 'B',  color: '#003580' },
+  { name: 'Just Eat',     short: 'JE', color: '#FF8000' },
+  { name: 'Uber Eats',    short: 'UE', color: '#06C167' },
+  { name: 'Glovo',        short: 'G',  color: '#FFC244' },
+  { name: 'Deliveroo',    short: 'D',  color: '#00CCBC' },
+  { name: 'Cosaporto',    short: 'CP', color: '#E03131' },
+];
+
+const faqItems = [
+  { question: 'Quanto costa il setup completo?', answer: 'Dipende dalla dimensione: per un ristorante 40-80 coperti, hardware + software base + formazione si va dai 3.000 ai 6.000€ una tantum + 80-180€/mese di abbonamento. Per il preventivo preciso ti faccio un sopralluogo gratuito.' },
+  { question: 'Quanto ci mette il personale a imparare?', answer: 'Veniamo in struttura per la formazione iniziale (mezza giornata tipica) e siamo disponibili nei primi 30 giorni per follow-up. Il personale di sala impara in 2-3 servizi, in cucina anche meno.' },
+  { question: 'Il software gira anche offline?', answer: 'Sì. La cassa e le comande funzionano localmente. Solo la sincronizzazione cloud (RT, channel manager, report) richiede internet. Se cade la linea, continui a vendere senza problemi.' },
+  { question: 'Posso integrare hardware che già ho?', answer: 'In molti casi sì: stampanti termiche compatibili, POS bancari standard, palmari Android. Te lo confermo in fase di sopralluogo dopo aver visto la configurazione attuale.' },
+  { question: 'Cosa succede se cambio idea?', answer: 'Il contratto è annuale, ma con clausola di recesso a 30 giorni. I dati sono tuoi (export completo) e te li consegniamo in formato standard.' },
+  { question: 'Riducete le commissioni delivery?', answer: 'Le commissioni sono di Glovo, Just Eat, ecc. Quello che riduciamo è il caos: tutti gli ordini in cassa, niente errori, niente cartacce. E ti aiutiamo a sviluppare il tuo asporto diretto (zero commissioni).' },
+];
+---
+<PageLayout
+  title="Software ristoranti GeRì — gestionale, cassa, comande, food cost"
+  description="GeRì PMS: il gestionale completo per ristoranti italiani. Cassa, comande, kitchen monitor, prenotazione tavoli, food cost, asporto. 23 moduli integrati, assistenza 7/7."
+  blobs="warm"
+>
+  <ClayHero
+    badge="Ristoranti · Bar · Pizzerie"
+    title="Il ristorante che funziona anche senza di te"
+    highlight="senza di te"
+    subtitle="Software gestionale GeRì + ecosistema Lasersoft per gestire cassa, sala, cucina, magazzino, food cost, asporto e prenotazioni — tutto da un'unica piattaforma."
+    primaryCta={{ label: 'Prenota demo gratuita', href: '/prenota-demo' }}
+    secondaryCta={{ label: 'Chiama 0122 675000', href: 'tel:+390122675000', variant: 'ghost' }}
+    backgroundImage="/images/hero/ristoranti"
+    backgroundAlt="Interno di un ristorante italiano con tavoli apparecchiati e luce calda"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="La nostra promessa"
+    title="Cucina sotto controllo, sala più veloce"
+    highlight="sotto controllo"
+    paragraphs={[
+      "GeRì non è un software cassa: è il sistema nervoso del tuo ristorante. Comande dal palmare arrivano in cucina senza errori di battitura, il kitchen monitor mostra i tempi di preparazione, e a fine servizio sai esattamente quanto hai guadagnato per ogni piatto.",
+      "Niente più voli di carta tra sala e cucina, niente più scontrini smarriti, niente più Excel del food cost a fine mese.",
+    ]}
+    image="/images/page-cards/ristoranti-card"
+    imageAlt="Piatto gourmet su tavolo elegante in ristorante italiano"
+    imageSide="right"
+    cta={{ label: 'Vedi GeRì in azione', href: '/prenota-demo' }}
+  />
+
+  <StatOrbs stats={stats} />
+
+  <BentoFeatures
+    title="+ Controllo, + Guadagno, + Tempo libero"
+    subtitle='"È come una Mercedes: tante cose vengono già di serie. Tu scegli le opzioni che servono al tuo modo di lavorare." — Sergio'
+    features={features}
+  />
+
+  <ModuleAccordion
+    title="I 23 moduli di GeRì"
+    subtitle="Tutto quello di cui hai bisogno per gestire un ristorante moderno, raggruppato per area funzionale. Attivi solo quelli che ti servono, paghi solo quelli che usi."
+    groups={groups}
+  />
+
+  <CaseStudyCard
+    name="Paola"
+    business="Osteria del Conte"
+    location="Italia"
+    category="Ristorante tradizionale"
+    quote="Da quando lavoriamo con Sergio abbiamo finalmente il controllo dei costi. Quello che fa la differenza è la disponibilità: Sergio risponde sempre, anche di sabato sera."
+    fullStory="Paola ha aperto l'Osteria del Conte 8 anni fa. Per i primi 4 anni gestiva tutto manualmente: comande su carta, magazzino a memoria, food cost a occhio. Da quando abbiamo introdotto GeRì + kitchen monitor + my CRM, i tempi morti tra cucina e sala si sono dimezzati, gli ammanchi cassa sono spariti, e Paola ha ricominciato a fare le ferie estive."
+    image="/images/legacy/testimonials/paola-extended.jpg"
+    imageAlt="Paola, titolare dell'Osteria del Conte, nel suo ristorante"
+    results={[
+      { label: 'Riduzione errori cassa', value: '-90%' },
+      { label: 'Tempi servizio',         value: '-35%' },
+      { label: 'Ferie estate Paola',     value: '2 settimane' },
+    ]}
+  />
+
+  <IntegrationLogos
+    title="Integrazione completa con i delivery"
+    subtitle="Gli ordini delle principali piattaforme delivery arrivano direttamente in cassa: niente più tablet sparsi, niente più ordini persi."
+    logos={deliveryLogos}
+  />
+
+  <StackingCards
+    badge="3 dolori del ristoratore"
+    title="Cosa ti risolviamo davvero"
+    highlight="ti risolviamo"
+    subtitle="Tre problemi che vediamo in tutti i ristoranti. Scrolla per vedere come li affrontiamo."
+    cards={[
+      {
+        title: 'Cassa sempre allineata, niente ammanchi',
+        description: 'Riconciliazione automatica tra cassa, POS bancario e mance a fine turno. Niente più 2-5% di incassi che spariscono ogni settimana.',
+        icon: icons.shield,
+        variant: 'copper',
+        cta: { label: 'Vedi come', href: '/prenota-demo' },
+      },
+      {
+        title: 'Food cost reale per ogni piatto',
+        description: "Ricette con grammature, costi materie prime aggiornati, margine per piatto. Scopri quali piatti ti rendono e quali no — col 5-10% di margine in più tipico.",
+        icon: icons.trendingUp,
+        variant: 'sage',
+        cta: { label: 'Calcola il tuo', href: '/prenota-demo' },
+      },
+      {
+        title: 'Asporto e delivery senza tablet sparsi',
+        description: 'Tutti gli ordini Just Eat, Glovo, Deliveroo arrivano in cassa come ordini normali. Niente confusione, niente errori, kitchen monitor sempre aggiornato.',
+        icon: icons.shoppingBag,
+        variant: 'bordeaux',
+        cta: { label: 'Scopri come', href: '/my-self-order' },
+      },
+    ]}
+  />
+
+  <BookingEmbed origin="ristoranti" />
+
+  <FAQ
+    title="Domande frequenti"
+    subtitle="Le domande che ci fanno più spesso. Se non trovi la tua, chiama o scrivi."
+    items={faqItems}
+  />
+
+  <ContactForm origin="ristoranti" title="Vuoi vedere GeRì sul tuo caso reale?" subtitle="Mandaci due righe sulla tua situazione: ti rispondo io personalmente." />
+</PageLayout>

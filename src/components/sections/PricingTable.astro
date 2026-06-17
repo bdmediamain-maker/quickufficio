@@ -1,0 +1,109 @@
+---
+import ClayButton from '~/components/ui/ClayButton.astro';
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+
+interface Plan {
+  name: string;
+  price: string;
+  currency?: string;
+  period?: string;
+  description?: string;
+  features: string[];
+  cta: { label: string; href: string };
+  highlight?: boolean;
+  badge?: string;
+}
+interface Props {
+  title?: string;
+  subtitle?: string;
+  plans: Plan[];
+  /** Note sotto la tabella */
+  note?: string;
+}
+
+const { title, subtitle, plans, note } = Astro.props;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  {(title || subtitle) && (
+    <div class="max-w-3xl mb-8 sm:mb-12 lg:mb-16 text-center mx-auto">
+      {title && (
+        <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+
+  <div data-reveal-stagger class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-6 lg:gap-10 items-stretch">
+    {plans.map((plan) => (
+      <div data-reveal="scale" class={`relative flex flex-col ${plan.highlight ? 'md:scale-105 z-10' : ''}`}>
+        {plan.badge && (
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+            <ClayBadge variant={plan.highlight ? 'bordeaux' : 'gold'} size="md">{plan.badge}</ClayBadge>
+          </div>
+        )}
+        <div
+          class={`flex flex-col gap-6 rounded-[32px] p-5 sm:p-6 lg:p-8 lg:p-10 h-full ${plan.highlight ? 'bg-clay-foreground text-clay-canvas' : 'glass-clay'}`}
+          style={plan.highlight ? 'box-shadow: var(--shadow-clay-surface);' : 'box-shadow: var(--shadow-clay-card);'}
+        >
+          <div>
+            <h3
+              class={`text-2xl sm:text-3xl font-black tracking-tight ${plan.highlight ? 'text-clay-canvas' : 'text-clay-foreground'}`}
+              style="font-family: Nunito, sans-serif;"
+            >
+              {plan.name}
+            </h3>
+            {plan.description && (
+              <p class={`mt-2 text-sm leading-relaxed font-medium ${plan.highlight ? 'text-clay-canvas/70' : 'text-clay-muted'}`} style="font-family: 'DM Sans', sans-serif;">
+                {plan.description}
+              </p>
+            )}
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class={`font-black text-5xl sm:text-6xl tracking-tight ${plan.highlight ? 'text-clay-canvas' : 'text-clay-foreground'}`} style="font-family: Nunito, sans-serif;">
+              {plan.currency ?? '€'}{plan.price}
+            </span>
+            <span class={`text-sm font-medium ${plan.highlight ? 'text-clay-canvas/70' : 'text-clay-muted'}`} style="font-family: 'DM Sans', sans-serif;">
+              {plan.period ?? '/mese'}
+            </span>
+          </div>
+          <ul class="flex flex-col gap-3">
+            {plan.features.map((f) => (
+              <li class="flex items-start gap-3 text-sm leading-relaxed" style="font-family: 'DM Sans', sans-serif;">
+                <span
+                  class={`shrink-0 inline-flex h-5 w-5 mt-0.5 rounded-full items-center justify-center ${plan.highlight ? 'bg-clay-accent-sage/30 text-clay-canvas' : 'bg-clay-accent-sage/20 text-clay-accent-sage'}`}
+                  aria-hidden="true"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                <span class={`${plan.highlight ? 'text-clay-canvas' : 'text-clay-foreground'} font-medium`}>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-auto pt-2">
+            <ClayButton
+              href={plan.cta.href}
+              variant={plan.highlight ? 'secondary' : 'primary'}
+              size="md"
+              block
+            >
+              {plan.cta.label}
+            </ClayButton>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+  {note && (
+    <p class="mt-10 text-center text-sm text-clay-muted font-medium max-w-2xl mx-auto" style="font-family: 'DM Sans', sans-serif;">
+      {note}
+    </p>
+  )}
+</section>

@@ -1,0 +1,35 @@
+---
+/**
+ * Background blob animati — fixed inset-0 -z-10 pointer-events-none.
+ * Brief §5 nota globale: 3-4 blob per ogni sezione/pagina, colori warm 10-12% opacity.
+ */
+interface Props {
+  /** Quanti blob renderizzare. Default 4 */
+  count?: 3 | 4 | 5;
+  /** Schema colore */
+  scheme?: 'warm' | 'cool' | 'sunset' | 'sage';
+}
+
+const { count = 4, scheme = 'warm' } = Astro.props;
+
+const schemes = {
+  warm:    ['bg-clay-accent/12',     'bg-clay-accent-alt/10',     'bg-clay-accent-sage/12',  'bg-clay-accent-gold/12',  'bg-clay-accent-warm/12'],
+  cool:    ['bg-clay-accent-sage/12','bg-clay-accent-gold/10',    'bg-clay-accent-warm/12',  'bg-clay-accent/10',       'bg-clay-accent-alt/8'],
+  sunset:  ['bg-clay-accent-warm/14','bg-clay-accent/12',         'bg-clay-accent-alt/10',   'bg-clay-accent-gold/14',  'bg-clay-accent-warm/10'],
+  sage:    ['bg-clay-accent-sage/14','bg-clay-accent-gold/10',    'bg-clay-accent/8',        'bg-clay-accent-warm/10',  'bg-clay-accent-sage/10'],
+};
+const blobs = schemes[scheme].slice(0, count);
+
+const positions = [
+  { class: 'top-[8%] left-[5%] h-72 w-72 sm:h-80 sm:w-80', anim: 'animate-clay-float', delay: '' },
+  { class: 'top-[35%] right-[6%] h-80 w-80 sm:h-96 sm:w-96', anim: 'animate-clay-float-delayed', delay: 'animation-delay-2000' },
+  { class: 'bottom-[18%] left-[18%] h-64 w-64 sm:h-72 sm:w-72', anim: 'animate-clay-float-slow', delay: 'animation-delay-4000' },
+  { class: 'top-[60%] right-[22%] h-56 w-56 sm:h-64 sm:w-64', anim: 'animate-clay-float', delay: 'animation-delay-6000' },
+  { class: 'bottom-[5%] right-[35%] h-72 w-72', anim: 'animate-clay-float-delayed', delay: 'animation-delay-2000' },
+];
+---
+<div aria-hidden="true" class="pointer-events-none fixed inset-0 overflow-hidden -z-10">
+  {blobs.map((blobBg, i) => (
+    <div class={`absolute rounded-full blur-3xl ${blobBg} ${positions[i].class} ${positions[i].anim} ${positions[i].delay}`}></div>
+  ))}
+</div>

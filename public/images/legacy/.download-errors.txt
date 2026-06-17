@@ -1,0 +1,1 @@
+ERR public/images/legacy/hotel/gallery-1.png  <-  https://d1hjjl5l7cel88.cloudfront.net/uploads/library_element_image/file/74831/hotel.png

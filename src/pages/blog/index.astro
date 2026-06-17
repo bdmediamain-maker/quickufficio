@@ -1,0 +1,106 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import BlogCard from '~/components/sections/BlogCard.astro';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import NewsletterSignup from '~/components/sections/NewsletterSignup.astro';
+import { icons } from '~/lib/icons';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
+
+const categories = Array.from(new Set(posts.map((p) => p.data.category))).sort();
+---
+<PageLayout
+  title="Blog Quickufficio — consigli pratici per Ho.Re.Ca italiano"
+  description="Consigli, normative, casi pratici per ristoratori e albergatori italiani. Come ridurre commissioni Booking, normative RT, GDPR hotel, food cost, channel manager."
+  blobs="warm"
+>
+  <ClayHero
+    badge="Blog"
+    title="Consigli pratici per il tuo Ho.Re.Ca"
+    highlight="pratici"
+    subtitle="Da chi vive il settore tutti i giorni. Niente fuffa, solo cose che ti possono aiutare a guadagnare di più, perdere meno tempo, evitare problemi col fisco."
+    backgroundImage="/images/hero/blog"
+    backgroundAlt="Laptop con tazza di caffè e quaderno aperto su scrivania di legno"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="Cosa trovi qui"
+    title="Articoli scritti da chi i problemi li ha vissuti"
+    highlight="li ha vissuti"
+    paragraphs={[
+      "Ogni post nasce da una situazione reale di un cliente: una multa Agenzia Entrate da 4.000€ evitata in extremis, un food cost al 48% scoperto solo dopo 2 anni, una commissione Booking che mangiava il 22% del fatturato.",
+      "Niente articoli generici copia-incolla. Solo cose che a Sergio sono successe davvero o che ha visto succedere ai clienti.",
+    ]}
+    image="/images/page-cards/blog-card"
+    imageAlt="Persona scrive a mano accanto a laptop, taccuino e caffè"
+    imageSide="right"
+  />
+
+  <section class="container-clay py-8 sm:py-12">
+    <div class="flex flex-wrap gap-3 mb-10">
+      <span class="px-5 h-12 inline-flex items-center rounded-2xl clay-button-primary text-white font-bold text-sm" style="font-family: Nunito, sans-serif; box-shadow: var(--shadow-clay-button);">
+        Tutti gli articoli
+      </span>
+      {categories.map((cat) => (
+        <span class="px-5 h-12 inline-flex items-center rounded-2xl glass-clay text-clay-foreground font-bold text-sm" style="font-family: Nunito, sans-serif; box-shadow: var(--shadow-clay-card);">
+          {cat}
+        </span>
+      ))}
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {posts.map((post) => (
+        <BlogCard
+          href={`/blog/${post.id}`}
+          title={post.data.title}
+          excerpt={post.data.excerpt}
+          category={post.data.category}
+          publishDate={post.data.publishDate}
+          cover={post.data.cover}
+          coverAlt={post.data.coverAlt}
+          author={post.data.author}
+        />
+      ))}
+    </div>
+
+    {posts.length === 0 && (
+      <p class="text-center text-clay-muted font-medium py-16" style="font-family: 'DM Sans', sans-serif;">
+        Stiamo pubblicando i primi articoli. Iscriviti alla newsletter per essere avvisato.
+      </p>
+    )}
+  </section>
+
+  <StackingCards
+    badge="Categorie del blog"
+    title="Tre filoni di contenuti"
+    highlight="filoni"
+    subtitle="Scriviamo solo di cose che abbiamo visto succedere ai clienti. Scrolla per scoprire i temi che approfondiamo."
+    cards={[
+      {
+        title: "Hotel & Booking",
+        description: "Come ridurre le commissioni OTA, scegliere il channel manager, ottimizzare il revenue management. Per albergatori italiani che vogliono recuperare margine senza perdere occupazione.",
+        icon: icons.hotel,
+        variant: 'bordeaux',
+      },
+      {
+        title: "Ristoranti & Bar",
+        description: "Food cost reale, errori di cassa, gestione del personale, asporto senza tablet sparsi. Le storie sono di clienti veri che ci hanno raccontato cosa li tormentava prima.",
+        icon: icons.chefHat,
+        variant: 'sage',
+      },
+      {
+        title: "Normative & Compliance",
+        description: "Registratore Telematico, GDPR, conservazione fiscale, lotteria scontrini. Tutto quello che cambia ogni anno spiegato in italiano comprensibile, con scadenze e multe reali.",
+        icon: icons.shield,
+        variant: 'copper',
+      },
+    ]}
+  />
+
+  <NewsletterSignup />
+</PageLayout>

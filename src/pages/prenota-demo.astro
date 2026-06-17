@@ -1,0 +1,173 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import BookingForm from '~/components/sections/BookingForm.astro';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import { icons } from '~/lib/icons';
+import TestimonialCarousel from '~/components/sections/TestimonialCarousel.astro';
+import FAQ from '~/components/sections/FAQ.astro';
+import { getCollection } from 'astro:content';
+
+const testimonialsAll = await getCollection('testimonials');
+testimonialsAll.sort((a, b) => {
+  const score = (t: typeof a) => (t.data.featured ? 2 : 0) + (t.data.verified ? 1 : 0);
+  return score(b) - score(a);
+});
+const testimonials = testimonialsAll.slice(0, 3).map((t) => ({
+  id: t.data.id,
+  name: t.data.name,
+  role: t.data.role,
+  business: t.data.business,
+  location: t.data.location,
+  quote: t.data.quote,
+  avatar: t.data.avatar,
+}));
+
+const expectations = [
+  { icon: '⏱️', label: '30-60 minuti, nessun impegno' },
+  { icon: '🎥', label: 'Video call (link via email)' },
+  { icon: '🖥️', label: 'Sergio condivide schermo, vedi i software in azione' },
+  { icon: '💬', label: 'Domande libere, niente pitch commerciale' },
+  { icon: '📅', label: 'Disponibilità: lun-ven 9-18' },
+  { icon: '📝', label: 'Resoconto sintetico via email entro 24h' },
+];
+
+const errorParam = Astro.url.searchParams.get('error');
+const errorMessage = errorParam === 'missing'
+  ? 'Compila tutti i campi richiesti.'
+  : errorParam === 'email'
+    ? "L'indirizzo email non è valido."
+    : errorParam === 'spam'
+      ? 'Richiesta bloccata dal sistema anti-spam. Se sei umano, riprova.'
+      : null;
+
+const faqItems = [
+  { question: 'Devo preparare qualcosa prima della demo?', answer: 'No, niente. Sergio ti chiede 2-3 domande all\'inizio per inquadrare la tua situazione, poi ti mostra esempi reali. Se hai vecchi report o screenshot del tuo sistema attuale, possono essere utili ma non obbligatori.' },
+  { question: 'Posso disdire?', answer: 'Sì, fino a 2 ore prima dell\'appuntamento, direttamente dal calendario TeamLeader (riceverai il link via email). Nessun costo.' },
+  { question: 'Quanto costa la demo?', answer: 'Niente, è gratuita. Sergio investe 30-60 minuti perché se diventiamo partner ci guadagniamo tutti. Se invece non fa per te, sei comunque libero di sentire la nostra opinione, magari ti torna utile in futuro.' },
+  { question: 'Cosa succede dopo la call?', answer: 'Se la cosa ti interessa, prepariamo un preventivo dettagliato basato su quello che ci siamo detti. Se hai dubbi, puoi fare altre chiamate o chiedere referenze. Niente pressione: i nostri clienti restano con noi per anni proprio perché non spingiamo.' },
+  { question: 'In che lingua si fa la demo?', answer: 'Italiano. Per clienti che operano in lingua diversa (es. hotel con team internazionale) possiamo gestire in inglese.' },
+];
+---
+<PageLayout
+  title="Prenota una demo gratuita con Sergio — Quickufficio"
+  description="Demo gratuita di 30-60 minuti con Sergio: niente venditori, niente pitch. Sergio condivide schermo, ti mostra i software in azione, risponde alle tue domande."
+  blobs="sunset"
+  hideStickyCta={true}
+>
+  <ClayHero
+    badge="Demo gratuita"
+    title="Parla con Sergio. 30-60 minuti."
+    highlight="Sergio"
+    subtitle="Niente venditori, nessun pitch commerciale. Sergio condivide schermo, ti mostra i software in azione, risponde alle tue domande. Se non fa per te lo capisci subito."
+    backgroundImage="/images/hero/prenota-demo"
+    backgroundAlt="Video call di lavoro su laptop — consulenza demo Quickufficio"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="Come funziona"
+    title="Una call, niente teatrini commerciali"
+    highlight="niente teatrini"
+    paragraphs={[
+      "Sergio si collega in video, condivide schermo, e ti mostra i software che useresti davvero — non un demo finto, ma le interfacce reali con dati di esempio realistici.",
+      "Tu fai domande, lui risponde. Se hai un problema specifico (commissioni Booking, errori cassa, food cost), lui ti dice cosa funzionerebbe per il tuo caso — anche se non è quello che vendiamo.",
+    ]}
+    image="/images/page-cards/prenota-demo-card"
+    imageAlt="Laptop con videoconferenza attiva su tavolo"
+    imageSide="right"
+  />
+
+  {errorMessage && (
+    <div class="container-clay py-2">
+      <div
+        class="rounded-2xl border-2 border-clay-accent-alt/30 bg-clay-accent-alt/5 px-5 py-4 text-clay-accent-alt"
+        style="font-family: 'DM Sans', sans-serif;"
+        role="alert"
+      >
+        <strong>Errore:</strong> {errorMessage}
+      </div>
+    </div>
+  )}
+
+  <section class="container-clay py-10 sm:py-14 lg:py-16">
+    <div class="grid lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="lg:col-span-7 order-2 lg:order-1">
+        <div
+          class="glass-clay rounded-[40px] p-6 sm:p-10 lg:p-12"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <h2 class="text-3xl sm:text-4xl font-black tracking-tight mb-2" style="font-family: Nunito, sans-serif;">
+            Inizia da qui
+          </h2>
+          <p class="text-clay-muted leading-relaxed font-medium mb-8" style="font-family: 'DM Sans', sans-serif;">
+            Compila 5 campi, poi scegli lo slot sul calendario. Sergio riceve la tua scheda prima della call.
+          </p>
+          <BookingForm origin="prenota-demo" />
+        </div>
+      </div>
+
+      <aside class="lg:col-span-5 order-1 lg:order-2">
+        <div
+          class="rounded-[32px] bg-clay-foreground text-clay-canvas p-8 lg:sticky lg:top-28"
+          style="box-shadow: var(--shadow-clay-surface);"
+        >
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">
+            Cosa aspettarti
+          </h2>
+          <ul class="mt-6 flex flex-col gap-4">
+            {expectations.map((e) => (
+              <li class="flex items-start gap-3">
+                <span class="text-xl shrink-0" aria-hidden="true">{e.icon}</span>
+                <span class="text-clay-canvas leading-relaxed font-medium text-sm sm:text-base" style="font-family: 'DM Sans', sans-serif;">{e.label}</span>
+              </li>
+            ))}
+          </ul>
+          <hr class="border-clay-canvas/20 my-6" />
+          <p class="text-sm text-clay-canvas/80 leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+            Preferisci una chiamata diretta? <a href="tel:+390122675000" class="underline font-bold text-clay-canvas">Chiama 0122 675000</a> in orario lavorativo.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <StackingCards
+    badge="Come si svolge la call"
+    title="3 momenti della tua demo con Sergio"
+    highlight="3 momenti"
+    subtitle="Niente sorprese: ti raccontiamo esattamente come va. Scrolla per vedere i passaggi stack."
+    cards={[
+      {
+        title: "Primi 10 minuti: ascolto",
+        description: "Sergio ti chiede 2-3 domande chiave: dimensione attività, dove perdi tempo o margine, cosa hai già provato. Solo dopo aver capito, decide cosa mostrarti.",
+        icon: icons.headphones,
+        variant: 'copper',
+      },
+      {
+        title: "20 minuti centrali: vedi il software in azione",
+        description: "Condivide schermo, ti mostra il gestionale con dati realistici simili al tuo caso. Niente video registrati, niente slide, solo interfacce reali. Tu fai domande, lui risponde live.",
+        icon: icons.monitor,
+        variant: 'sage',
+      },
+      {
+        title: "Ultimi minuti: cosa farebbe lui al posto tuo",
+        description: "Sergio ti dice cosa ti consiglierebbe — anche se non è quello che vendiamo. Se vuoi un preventivo, te lo mandiamo entro 24h. Se vuoi pensarci, nessuno ti richiamerà a forza.",
+        icon: icons.shield,
+        variant: 'bordeaux',
+        cta: { label: 'Prenota la tua', href: '#main' },
+      },
+    ]}
+  />
+
+  <TestimonialCarousel
+    title="Cosa dicono i clienti che hanno fatto la demo"
+    testimonials={testimonials}
+  />
+
+  <FAQ
+    title="Domande sulla demo"
+    items={faqItems}
+  />
+</PageLayout>

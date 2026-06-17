@@ -1,0 +1,35 @@
+---
+interface Props {
+  variant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta' | 'foreground';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { variant = 'copper', size = 'md', class: className = '' } = Astro.props;
+
+const variantClass = {
+  copper:      'clay-orb-copper text-white',
+  bordeaux:    'clay-orb-bordeaux text-white',
+  sage:        'clay-orb-sage text-white',
+  gold:        'clay-orb-gold text-clay-foreground',
+  cream:       'clay-orb-cream text-clay-foreground',
+  terracotta:  'clay-orb-terracotta text-white',
+  foreground:  'bg-clay-foreground text-clay-canvas',
+}[variant];
+
+const sizeClass = {
+  sm: 'h-7 px-3 text-xs',
+  md: 'h-9 px-4 text-sm',
+}[size];
+---
+<span
+  class={[
+    'inline-flex items-center justify-center rounded-full font-bold tracking-tight uppercase whitespace-nowrap',
+    sizeClass,
+    variantClass,
+    className,
+  ].filter(Boolean).join(' ')}
+  style="font-family: Nunito, sans-serif; letter-spacing: 0.05em;"
+>
+  <slot />
+</span>

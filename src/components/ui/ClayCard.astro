@@ -1,0 +1,66 @@
+---
+interface Props {
+  /** Variante visiva. `glass` = card translucida warm. `solid` = card opaca. `surface` = container grande (shadow-clay-surface) */
+  variant?: 'glass' | 'solid' | 'surface';
+  /** Border radius. Default 32px (brief §4.3) */
+  radius?: 20 | 24 | 32 | 40 | 48 | 60;
+  /** Hover lift transition. Default true */
+  hover?: boolean;
+  /** Padding interno. Default sm:p-8 */
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** Tag HTML wrapper. Default div */
+  as?: 'div' | 'article' | 'section' | 'a';
+  /** href se as=a */
+  href?: string;
+  class?: string;
+}
+
+const {
+  variant = 'glass',
+  radius = 32,
+  hover = true,
+  padding = 'md',
+  as: Tag = 'div',
+  href,
+  class: className = '',
+} = Astro.props;
+
+const variantClass =
+  variant === 'glass'
+    ? 'glass-clay'
+    : variant === 'solid'
+      ? 'bg-clay-card-solid'
+      : 'bg-clay-canvas';
+
+const shadowVar =
+  variant === 'surface'
+    ? '--shadow-clay-surface'
+    : '--shadow-clay-card';
+
+const hoverShadowVar = '--shadow-clay-card-hover';
+
+const paddingClass = {
+  none: '',
+  sm: 'p-4 sm:p-6',
+  md: 'p-5 sm:p-6 lg:p-8',
+  lg: 'p-6 sm:p-8 md:p-10 lg:p-12',
+}[padding];
+
+const radiusStyle = `border-radius: ${radius}px`;
+const shadowStyle = `box-shadow: var(${shadowVar})`;
+---
+<Tag
+  href={href}
+  class={[
+    variantClass,
+    paddingClass,
+    'relative',
+    hover && 'transition-all duration-500 hover:-translate-y-2',
+    className,
+  ].filter(Boolean).join(' ')}
+  style={`${radiusStyle}; ${shadowStyle};`}
+  onmouseover={hover ? `this.style.boxShadow = 'var(${hoverShadowVar})'` : undefined}
+  onmouseout={hover ? `this.style.boxShadow = 'var(${shadowVar})'` : undefined}
+>
+  <slot />
+</Tag>

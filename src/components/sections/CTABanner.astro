@@ -1,0 +1,65 @@
+---
+import ClayButton from '~/components/ui/ClayButton.astro';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  /** Variant per scegliere il background */
+  variant?: 'gradient' | 'foreground' | 'glass';
+}
+const {
+  title,
+  subtitle,
+  primaryCta = { label: 'Prenota demo', href: '/prenota-demo' },
+  secondaryCta = { label: 'Chiama 0122 675000', href: 'tel:+390122675000' },
+  variant = 'gradient',
+} = Astro.props;
+
+const bgClass = {
+  gradient: 'clay-button-primary text-white',
+  foreground: 'bg-clay-foreground text-clay-canvas',
+  glass: 'glass-clay text-clay-foreground',
+}[variant];
+---
+<section class="container-clay py-10 sm:py-14 lg:py-16">
+  <div
+    data-reveal="scale"
+    class={`relative overflow-hidden rounded-[40px] sm:rounded-[60px] p-6 sm:p-10 lg:p-16 ${bgClass} text-center flex flex-col items-center gap-6`}
+    style="box-shadow: var(--shadow-clay-surface);"
+  >
+    <div aria-hidden="true" class="absolute inset-0 -z-10 opacity-30 pointer-events-none">
+      <div class="absolute top-0 left-10 h-40 w-40 rounded-full bg-white/20 blur-2xl"></div>
+      <div class="absolute bottom-0 right-10 h-48 w-48 rounded-full bg-white/15 blur-3xl"></div>
+    </div>
+    <h2 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight max-w-3xl" style="font-family: Nunito, sans-serif;">
+      {title}
+    </h2>
+    {subtitle && (
+      <p class="text-lg leading-relaxed font-medium max-w-2xl opacity-90" style="font-family: 'DM Sans', sans-serif;">
+        {subtitle}
+      </p>
+    )}
+    <div class="flex flex-wrap justify-center gap-4 mt-2">
+      {primaryCta && (
+        <a
+          href={primaryCta.href}
+          class="inline-flex items-center justify-center h-14 px-8 rounded-[20px] bg-white text-clay-foreground font-bold tracking-tight transition-all duration-200 hover:-translate-y-1"
+          style="font-family: Nunito, sans-serif; box-shadow: var(--shadow-clay-card);"
+        >
+          {primaryCta.label}
+        </a>
+      )}
+      {secondaryCta && (
+        <a
+          href={secondaryCta.href}
+          class="inline-flex items-center justify-center h-14 px-8 rounded-[20px] border-2 border-current font-bold tracking-tight transition-all duration-200 hover:-translate-y-1"
+          style="font-family: Nunito, sans-serif;"
+        >
+          {secondaryCta.label}
+        </a>
+      )}
+    </div>
+  </div>
+</section>

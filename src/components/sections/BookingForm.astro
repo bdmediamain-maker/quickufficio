@@ -1,0 +1,83 @@
+---
+import ClayInput from '~/components/ui/ClayInput.astro';
+import ClayTextarea from '~/components/ui/ClayTextarea.astro';
+import ClayCheckbox from '~/components/ui/ClayCheckbox.astro';
+import ClayRadioGroup from '~/components/ui/ClayRadioGroup.astro';
+import ClayButton from '~/components/ui/ClayButton.astro';
+
+interface Props {
+  /** Action endpoint */
+  action?: string;
+  /** Per BookingEmbed full layout — mostra anche heading */
+  withHeading?: boolean;
+  /** Origine — passato come hidden input al server (es. "homepage", "ristoranti") */
+  origin?: string;
+}
+const { action = '/api/booking-prequalify', withHeading = false, origin = 'generic' } = Astro.props;
+
+const sectors = [
+  { value: 'ristorante', label: 'Ristorante', icon: '🍝' },
+  { value: 'hotel',      label: 'Hotel',      icon: '🏨' },
+  { value: 'bar',        label: 'Bar',        icon: '☕' },
+  { value: 'pizzeria',   label: 'Pizzeria',   icon: '🍕' },
+  { value: 'bnb',        label: 'B&B',        icon: '🛏️' },
+  { value: 'villaggio',  label: 'Villaggio',  icon: '🏖️' },
+];
+---
+<form method="POST" action={action} class="flex flex-col gap-5" data-booking-form>
+  {withHeading && (
+    <div class="mb-2">
+      <h3 class="text-2xl sm:text-3xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">
+        Parla con Sergio
+      </h3>
+      <p class="mt-2 text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+        Compila e scegli lo slot sul calendario. Niente venditori, solo consulenza.
+      </p>
+    </div>
+  )}
+
+  <input type="hidden" name="origin" value={origin} />
+
+  <div class="grid sm:grid-cols-2 gap-5">
+    <ClayInput name="nome" label="Nome e cognome" required autocomplete="name" />
+    <ClayInput type="tel" name="telefono" label="Telefono" required autocomplete="tel" inputmode="tel" />
+  </div>
+  <ClayInput type="email" name="email" label="Email" required autocomplete="email" inputmode="email" />
+
+  <ClayRadioGroup
+    name="tipo_struttura"
+    label="Che tipo di attività gestisci?"
+    options={sectors}
+    required
+    columns={3}
+  />
+
+  <ClayTextarea
+    name="note"
+    label="Cosa vorresti automatizzare? (opzionale)"
+    placeholder="Es. ridurre errori cassa, eliminare commissioni Booking, gestire prenotazioni..."
+    rows={3}
+  />
+
+  <ClayCheckbox name="gdpr" required>
+    Ho letto la <a href="/privacy" class="text-clay-accent underline hover:no-underline">privacy policy</a> e acconsento al trattamento dei dati per essere ricontattato.
+  </ClayCheckbox>
+
+  <!-- Honeypot anti-spam -->
+  <input type="text" name="company_website" autocomplete="off" tabindex="-1" class="absolute opacity-0 pointer-events-none h-0 w-0" aria-hidden="true" />
+
+  <div class="pt-2">
+    <ClayButton as="button" type="submit" variant="primary" size="lg" block>
+      <span class="inline-flex items-center gap-2">
+        Continua su calendario
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </span>
+    </ClayButton>
+  </div>
+
+  <p class="text-xs text-clay-muted text-center font-medium leading-relaxed" style="font-family: 'DM Sans', sans-serif;">
+    Niente spam, nessuna lista di marketing. I dati arrivano direttamente a Sergio.
+  </p>
+</form>

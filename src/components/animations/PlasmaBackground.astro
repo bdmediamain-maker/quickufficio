@@ -1,0 +1,42 @@
+---
+/**
+ * PlasmaBackground — wrapper Astro che monta Plasma come React island fisso behind page content.
+ * Carica solo client-side (client:only) perché OGL WebGL richiede browser APIs.
+ */
+import Plasma from './Plasma.tsx';
+
+interface Props {
+  color?: string;
+  speed?: number;
+  opacity?: number;
+  scale?: number;
+}
+
+const {
+  color = '#C04ECF',
+  speed = 0.45,
+  opacity = 0.55,
+  scale = 1.35,
+} = Astro.props;
+---
+<div class="qu-plasma-bg" aria-hidden="true">
+  <Plasma
+    client:only="react"
+    color={color}
+    speed={speed}
+    direction="forward"
+    scale={scale}
+    opacity={opacity}
+    mouseInteractive={false}
+  />
+</div>
+
+<style is:inline>
+  .qu-plasma-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+</style>

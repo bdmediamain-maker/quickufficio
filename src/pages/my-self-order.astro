@@ -1,0 +1,241 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import ThreePillars from '~/components/sections/ThreePillars.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import PricingTable from '~/components/sections/PricingTable.astro';
+import IntegrationLogos from '~/components/sections/IntegrationLogos.astro';
+import BookingEmbed from '~/components/sections/BookingEmbed.astro';
+import FAQ from '~/components/sections/FAQ.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import ClayCard from '~/components/ui/ClayCard.astro';
+import { icons } from '~/lib/icons';
+
+const pillars = [
+  {
+    title: 'Web App, niente da installare',
+    description: "Il cliente apre il menu inquadrando il QR code. Funziona su qualsiasi smartphone, anche di vecchia generazione. Zero attriti, zero installazioni, zero account.",
+    icon: icons.qrCode,
+    variant: 'copper' as const,
+  },
+  {
+    title: 'Veloce, anche con linea lenta',
+    description: 'Menu ottimizzato per connessioni mobili dei luoghi turistici. Tempo di caricamento medio 1,5 secondi. Funziona anche con 3G.',
+    icon: icons.clock,
+    variant: 'sage' as const,
+  },
+  {
+    title: 'Potente, integrato col gestionale',
+    description: 'Gli ordini arrivano direttamente in cassa e in cucina. Niente ritrascrizione, niente errori. Personalizzato col tuo brand, multilingua, allergeni, foto.',
+    icon: icons.smartphone,
+    variant: 'bordeaux' as const,
+  },
+];
+
+const features = [
+  "Menu digitale con foto, descrizioni, allergeni, traduzioni",
+  "Ordine al tavolo direttamente dal cellulare del cliente",
+  "Pagamento al tavolo o cassa, a tua scelta",
+  "Customizzabile con tuo brand, colori, font",
+  "Gestione varianti e modifier (es. senza glutine, doppia mozzarella)",
+  "Multilingua: italiano + 30 lingue traduzione automatica",
+  "Checkout veloce con riepilogo carrello chiaro",
+  "Ordini in cassa in tempo reale, integrazione GeRì",
+  "Stampa comande in cucina automatica",
+  "Tip / mancia opzionale configurabile",
+  "Slot orari per asporto, slot ritiro tavolo",
+  "Aggiornamento real-time prezzi e disponibilità",
+  "Reportistica vendite per piatto, ora, giorno",
+  "Promo flash e codici sconto configurabili",
+  "Conformità GDPR e cookie policy integrata",
+];
+
+const plans = [
+  {
+    name: 'Menu',
+    price: '25',
+    period: '/mese',
+    description: 'Solo menu digitale + QR code, niente ordini in app.',
+    features: [
+      'Menu digitale fino a 200 piatti',
+      'QR code personalizzato',
+      'Multilingua base (5 lingue)',
+      'Aggiornamento prezzi real-time',
+      'Allergeni e info nutrizionali',
+      'Stats visualizzazioni',
+    ],
+    cta: { label: 'Prenota demo', href: '/prenota-demo' },
+  },
+  {
+    name: 'Lite',
+    price: '70',
+    period: '/mese',
+    description: 'Menu + ordini al tavolo, ideale per ristoranti medi.',
+    features: [
+      'Tutto del piano Menu',
+      'Ordini al tavolo via QR',
+      'Integrazione cassa GeRì',
+      'Multilingua estesa (15 lingue)',
+      'Personalizzazione brand completa',
+      'Promo e codici sconto',
+      'Pagamento online opzionale',
+    ],
+    cta: { label: 'Prenota demo', href: '/prenota-demo' },
+    highlight: true,
+    badge: 'Più richiesto',
+  },
+  {
+    name: 'Exclusive',
+    price: '140',
+    period: '/mese',
+    description: 'Soluzione completa multi-canale per attività evolute.',
+    features: [
+      'Tutto del piano Lite',
+      'Ordini asporto + delivery proprio',
+      'Multilingua illimitata (30 lingue)',
+      'Slot orari avanzati',
+      'CRM clienti + fidelity',
+      'Multi-ristorante / multi-menu',
+      'Account manager dedicato',
+    ],
+    cta: { label: 'Prenota demo', href: '/prenota-demo' },
+  },
+];
+
+const deliveryLogos = [
+  { name: 'Just Eat',     short: 'JE', color: '#FF8000' },
+  { name: 'Uber Eats',    short: 'UE', color: '#06C167' },
+  { name: 'Glovo',        short: 'G',  color: '#FFC244' },
+  { name: 'Deliveroo',    short: 'D',  color: '#00CCBC' },
+  { name: 'Cosaporto',    short: 'CP', color: '#E03131' },
+];
+
+const faqItems = [
+  { question: 'Il cliente deve scaricare un\'app?', answer: 'No. My Self Order è una web app: si apre direttamente dal browser inquadrando il QR code. Zero installazioni, zero account, zero attriti.' },
+  { question: 'Posso provarlo prima di comprare?', answer: 'Sì. In demo ti mostriamo una vetrina di un ristorante reale che lo usa, e poi configuriamo un menu di prova col tuo brand in 10 minuti.' },
+  { question: 'Si integra con GeRì?', answer: 'Sì, è il caso d\'uso principale. Gli ordini arrivano in cassa e in cucina come se li avesse battuti il cameriere. Niente doppia digitazione.' },
+  { question: 'Funziona anche per l\'asporto?', answer: 'Sì, dal piano Exclusive: slot orari di ritiro configurabili, pagamento online, notifica quando ordine pronto. Sostituisce le piattaforme delivery per gli ordini diretti.' },
+  { question: 'Quanto aumenta il ticket medio?', answer: 'Studi clienti reali mostrano +15-22%. Funziona perché il cliente sceglie con più calma, vede le foto, può aggiungere extra in autonomia, e non si sente "pressato" dal cameriere.' },
+];
+---
+<PageLayout
+  title="My Self Order — menu QR code e ordini dal cellulare per ristoranti"
+  description="Menu digitale con QR code: il tuo cliente ordina dal proprio cellulare. Aumenta ticket medio del 15-22%. Tre piani da 25€/mese. Integrato con GeRì."
+  blobs="sunset"
+>
+  <ClayHero
+    badge="Webapp · QR code"
+    title="Il cliente ordina dal cellulare. Tu fai più margine."
+    highlight="cellulare"
+    subtitle="My Self Order è la webapp QR code per ristoranti, bar e B&B. Niente app da installare: il cliente inquadra, sceglie, ordina e paga. Tu in cassa vedi tutto in tempo reale."
+    primaryCta={{ label: 'Prenota demo gratuita', href: '/prenota-demo' }}
+    secondaryCta={{ label: 'Vedi una demo live', href: '#demo-live', variant: 'ghost' }}
+    backgroundImage="/images/hero/my-self-order"
+    backgroundAlt="Cliente al tavolo che inquadra QR code per ordinare dal cellulare"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="Esperienza cliente"
+    title="L'ospite scopre il menu con calma. Senza fretta."
+    highlight="senza fretta"
+    paragraphs={[
+      "Con il menu cartaceo l'ospite ordina in 30 secondi perché si sente osservato. Col QR code apre il menu sul proprio cellulare, esplora le foto, legge gli ingredienti, sceglie con tranquillità.",
+      "Risultato misurato sui nostri clienti: +18% ticket medio nei primi 3 mesi. Più antipasti, più contorni, più dessert.",
+    ]}
+    image="/images/page-cards/my-self-order-card"
+    imageAlt="Cliente sceglie dal menu digitale visualizzato sul proprio smartphone"
+    imageSide="right"
+    cta={{ label: 'Prenota una demo', href: '/prenota-demo' }}
+  />
+
+  <StackingCards
+    badge="Cosa rende My Self Order diverso"
+    title="Web App, Veloce, Potente"
+    highlight="Potente"
+    subtitle="Tre cose che differenziano My Self Order dalle webapp generiche di concorrenti. Scrolla per vedere le card stack."
+    cards={pillars}
+  />
+
+  <section class="container-clay py-10 sm:py-16 lg:py-24">
+    <div class="max-w-3xl mb-12">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+        All-in-One — 15 funzionalità pensate per Ho.Re.Ca
+      </h2>
+      <p class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+        Costruito da chi conosce il settore. Ogni feature è il risultato di feedback da clienti reali, raffinato in 5 anni di uso quotidiano.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {features.map((f) => (
+        <div
+          class="flex items-start gap-3 glass-clay rounded-2xl px-5 py-4"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <span class="inline-flex h-6 w-6 mt-0.5 shrink-0 items-center justify-center rounded-full clay-orb-sage text-white" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>
+          <span class="text-clay-foreground font-medium" style="font-family: 'DM Sans', sans-serif;">{f}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <PricingTable
+    title="Tre piani, scegli quello giusto"
+    subtitle="Setup iniziale gratuito, formazione inclusa, recesso a 30 giorni. Tutti i prezzi escluso IVA."
+    plans={plans}
+    note="Tutti i piani includono assistenza 7/7 e aggiornamenti continui. Setup iniziale in struttura: configurazione menu + QR code + branding + formazione personale."
+  />
+
+  <section id="demo-live" class="container-clay py-16">
+    <ClayCard variant="surface" radius={48} padding="lg" hover={false}>
+      <div class="text-center max-w-2xl mx-auto">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">
+          Demo live
+        </h2>
+        <p class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          Vuoi vedere come funziona dal punto di vista del cliente? Inquadra il QR code di una demo reale o prenota una sessione guidata con Sergio.
+        </p>
+        <p class="mt-6 text-sm text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;">
+          <strong class="text-clay-foreground">Nota:</strong> per accesso alla demo interattiva guidata e credenziali di test, scrivici dal form qui sotto o prenota la demo. Non distribuiamo credenziali pubbliche per motivi di sicurezza.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3 justify-center">
+          <a
+            href="/prenota-demo"
+            class="inline-flex items-center justify-center h-14 px-8 rounded-[20px] clay-button-primary text-white font-bold tracking-tight"
+            style="font-family: Nunito, sans-serif; box-shadow: var(--shadow-clay-button);"
+          >
+            Prenota demo guidata
+          </a>
+          <a
+            href="tel:+390122675000"
+            class="inline-flex items-center justify-center h-14 px-8 rounded-[20px] glass-clay text-clay-foreground font-bold tracking-tight"
+            style="font-family: Nunito, sans-serif; box-shadow: var(--shadow-clay-card);"
+          >
+            Chiama 0122 675000
+          </a>
+        </div>
+      </div>
+    </ClayCard>
+  </section>
+
+  <IntegrationLogos
+    title="Integrato con le principali piattaforme delivery"
+    subtitle="Gli ordini delle piattaforme delivery arrivano in cassa insieme a quelli My Self Order. Una vista, un sistema, niente confusione."
+    logos={deliveryLogos}
+  />
+
+  <BookingEmbed origin="my-self-order" />
+
+  <FAQ items={faqItems} />
+
+  <ContactForm
+    origin="my-self-order"
+    title="Vuoi attivare My Self Order?"
+    subtitle="Mandaci due righe sulla tua attività: ti rispondiamo con un piano consigliato e disponibilità per setup."
+  />
+</PageLayout>

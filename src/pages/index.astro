@@ -1,0 +1,267 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import PlasmaBackground from '~/components/animations/PlasmaBackground.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import StatOrbs from '~/components/sections/StatOrbs.astro';
+import BentoFeatures from '~/components/sections/BentoFeatures.astro';
+import StorySection from '~/components/sections/StorySection.astro';
+import SectorList from '~/components/sections/SectorList.astro';
+import ThreePillars from '~/components/sections/ThreePillars.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import TestimonialCarousel from '~/components/sections/TestimonialCarousel.astro';
+import BookingEmbed from '~/components/sections/BookingEmbed.astro';
+import BlogCard from '~/components/sections/BlogCard.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import { icons } from '~/lib/icons';
+import { getCollection } from 'astro:content';
+
+const testimonialsAll = await getCollection('testimonials');
+testimonialsAll.sort((a, b) => {
+  // Prima i featured+verified (Paola), poi i placeholder
+  const score = (t: typeof a) => (t.data.featured ? 2 : 0) + (t.data.verified ? 1 : 0);
+  return score(b) - score(a);
+});
+const testimonials = testimonialsAll.map((t) => ({
+  id: t.data.id,
+  name: t.data.name,
+  role: t.data.role,
+  business: t.data.business,
+  location: t.data.location,
+  quote: t.data.quote,
+  avatar: t.data.avatar,
+}));
+
+const blogPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 3);
+
+const stats = [
+  { value: '100+',     label: 'Attività servite in Italia',     variant: 'copper' as const },
+  { value: '20 anni',  label: 'Esperienza Ho.Re.Ca',            variant: 'bordeaux' as const },
+  { value: '7/7',      label: 'Assistenza tutti i giorni',      variant: 'sage' as const },
+  { value: '100%',     label: 'Made in Italy',                  variant: 'gold' as const },
+];
+
+const features = [
+  {
+    title: '+ Controllo, + Guadagno, + Tempo libero',
+    description: 'Sergio in 20 anni ha aiutato 100+ imprenditori Ho.Re.Ca a riprendere il controllo della loro attività. Software gestionali che ti tolgono il peso operativo per farti tornare a fare quello che ami: ospitare le persone.',
+    icon: icons.trendingUp,
+    iconVariant: 'copper' as const,
+    image: '/images/legacy/team/sergio-original.jpg',
+    imageAlt: 'Sergio, fondatore di Quickufficio, al lavoro con un cliente',
+    href: '/chi-siamo',
+    large: true,
+  },
+  {
+    title: 'Software Hotel',
+    description: 'PMS cloud All-in-One: prenotazioni, channel manager, CRM, check-in online. Riduce commissioni Booking del 50%.',
+    icon: icons.hotel,
+    iconVariant: 'bordeaux' as const,
+    href: '/hotel',
+  },
+  {
+    title: 'Software Ristoranti',
+    description: 'GeRì PMS: cassa, comande, kitchen monitor, food cost, magazzino. Tutto integrato, niente più Excel.',
+    icon: icons.chefHat,
+    iconVariant: 'sage' as const,
+    href: '/ristoranti',
+  },
+  {
+    title: 'Hardware professionale',
+    description: 'POS Lasersoft, Registratori Telematici Eden, kiosk, palmari Android. Selezionati e installati da noi.',
+    icon: icons.monitor,
+    iconVariant: 'gold' as const,
+    href: '/hardware',
+  },
+  {
+    title: 'My Self Order',
+    description: 'Menu QR code: il cliente ordina dal cellulare. Tre piani da 25€/mese. Aumenta ticket medio del 15%.',
+    icon: icons.qrCode,
+    iconVariant: 'terracotta' as const,
+    href: '/my-self-order',
+  },
+];
+
+const sectors = [
+  { label: 'Hotel',       icon: icons.hotel,        variant: 'bordeaux' as const, href: '/hotel' },
+  { label: 'Ristoranti',  icon: icons.chefHat,      variant: 'sage' as const,     href: '/ristoranti' },
+  { label: 'Pizzerie',    icon: icons.pizza,        variant: 'copper' as const,   href: '/ristoranti' },
+  { label: 'Bar',         icon: icons.coffee,       variant: 'gold' as const,     href: '/ristoranti' },
+  { label: 'B&B',         icon: icons.bed,          variant: 'cream' as const,    href: '/hotel' },
+  { label: 'Villaggi',    icon: icons.palmtree,     variant: 'terracotta' as const, href: '/hotel' },
+  { label: 'Asporto',     icon: icons.shoppingBag,  variant: 'copper' as const,   href: '/my-self-order' },
+];
+
+const pillars = [
+  {
+    title: 'Assistenza 7/7',
+    description: "Sergio risponde anche di sabato sera quando capita un problema in pieno servizio. Niente call center, niente ticket persi: sai chi chiama e quando ti richiama.",
+    icon: icons.headphones,
+    variant: 'copper' as const,
+  },
+  {
+    title: 'Formazione vera',
+    description: 'Veniamo in struttura per formare il personale. Sessioni pratiche con il team, manuali su misura, follow-up nei primi 30 giorni. Nessuno resta indietro.',
+    icon: icons.graduationCap,
+    variant: 'sage' as const,
+  },
+  {
+    title: 'Resilienza',
+    description: 'Cloud Recovery, backup giornalieri, conservazione fiscale a norma. Se succede qualcosa, sei operativo in meno di 1 ora.',
+    icon: icons.refreshCw,
+    variant: 'bordeaux' as const,
+  },
+];
+---
+<PageLayout
+  title="Quickufficio · Software gestionali e hardware per Hotel, Ristoranti, Bar"
+  description="Software gestionali e hardware professionali per Ho.Re.Ca italiano. PMS hotel, gestionale ristoranti, Kiosk, RT, palmari. Assistenza 7/7, made in Italy, 20 anni di esperienza."
+>
+  {/* Body transparent così il plasma fixed dietro è visibile attraverso le sezioni senza bg-clay-canvas */}
+  <Fragment slot="head">
+    <style is:inline>
+      html, body { background: transparent !important; }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background: #FFFFFF;
+        pointer-events: none;
+      }
+    </style>
+  </Fragment>
+
+  {/* Plasma WebGL background — fisso behind tutta la pagina, visibile attraverso sezioni transparent */}
+  <PlasmaBackground color="#C04ECF" speed={0.45} opacity={0.55} scale={1.35} />
+
+  <ClayHero
+    badge="Ho.Re.Ca · Italia"
+    title="Più controllo, più guadagno, più tempo libero"
+    highlight="più guadagno"
+    subtitle="Hardware e software gestionali per Hotel, Ristoranti, Bar e B&B. Niente template generici: soluzioni studiate per il tuo specifico settore, installate e seguite da chi le conosce davvero."
+    primaryCta={{ label: 'Prenota una demo gratuita', href: '/prenota-demo' }}
+    secondaryCta={{ label: 'Chiama 0122 675000', href: 'tel:+390122675000', variant: 'ghost' }}
+    backgroundImage="/images/hero/restaurant"
+    backgroundAlt="Tavolo apparecchiato di un ristorante italiano — piatto gourmet, calici di vino, atmosfera serale calda"
+    size="lg"
+  />
+
+  {/* Alternanza bianco/plasma — sezioni con bg-clay-canvas (white solid) coprono plasma,
+      sezioni transparent (relative z-10) lo rivelano */}
+
+  {/* StatOrbs — block (white, copre plasma) */}
+  <div class="bg-clay-canvas relative">
+    <StatOrbs stats={stats} />
+  </div>
+
+  {/* BentoFeatures — plasma visibile */}
+  <div class="relative">
+    <BentoFeatures
+      title="Tutto quello che ti serve, da un solo interlocutore"
+      subtitle="Software, hardware e assistenza: una sola filiera, un solo numero da chiamare quando qualcosa non funziona."
+      features={features}
+    />
+  </div>
+
+  {/* StorySection — block (white) */}
+  <div class="bg-clay-canvas relative">
+    <StorySection
+      badge="Stiamo aiutando più di 100 attività"
+      title="Sono Sergio, e vendo soluzioni — non software"
+      highlight="non software"
+      paragraphs={[
+        "Ho fondato Quickufficio nel 2015 dopo 15 anni passati a vedere ristoratori e albergatori arrabbiati con i loro gestionali. Programmi pensati da informatici per informatici, venduti senza follow-up, abbandonati al primo problema.",
+        "Quello che facciamo è diverso: ascoltiamo prima, scegliamo gli strumenti dopo. Il software è uno strumento; la cosa che vendiamo davvero è il ritorno al controllo della tua attività.",
+        "In 20 anni di Ho.Re.Ca abbiamo lavorato con catene, B&B di provincia, ristoranti stellati e bar di paese. Sappiamo cosa funziona per ognuno.",
+      ]}
+      image="/images/legacy/testimonials/paola-extended.jpg"
+      imageAlt="Sergio in azione con Paola, titolare dell'Osteria del Conte"
+      imageSide="right"
+      signature="Sergio · Quickufficio.com"
+    />
+  </div>
+
+  {/* SectorList — plasma visibile */}
+  <div class="relative">
+    <SectorList
+      title="Per ogni tipo di attività food &amp; hospitality"
+      subtitle="Hotel, ristoranti, pizzerie, bar, B&B, villaggi, asporto: setup studiati per ciascun settore, con i moduli giusti per il tuo specifico modo di lavorare."
+      sectors={sectors}
+    />
+  </div>
+
+  {/* StackingCards — "Cosa fa la differenza" effetto deck-of-cards */}
+  <div class="bg-clay-canvas relative">
+    <StackingCards
+      badge="Il metodo Quickufficio"
+      title="Cosa fa la differenza"
+      highlight="la differenza"
+      subtitle="Tre cose che ti diciamo subito, prima ancora di parlare di prezzo. Scrolla per vederle stack."
+      cards={pillars}
+    />
+  </div>
+
+  {/* TestimonialCarousel — plasma visibile */}
+  <div class="relative">
+    <TestimonialCarousel
+      title="Cosa dicono i clienti"
+      subtitle="Mostriamo solo testimonial di clienti reali. Niente stock photo, niente review fasulle."
+      testimonials={testimonials}
+    />
+  </div>
+
+  {/* BookingEmbed — block (white) */}
+  <div class="bg-clay-canvas relative">
+    <BookingEmbed
+      variant="full"
+      origin="homepage"
+      title="Parla con Sergio. 30-60 minuti."
+      subtitle="Niente venditori, niente pitch commerciali. Sergio condivide schermo, ti mostra i software in azione, risponde alle tue domande. Se non fa per te lo capisci subito, senza obblighi."
+    />
+  </div>
+
+  {/* Blog preview — plasma visibile */}
+  {blogPosts.length > 0 && (
+    <div class="relative">
+    <section class="container-clay py-10 sm:py-16 lg:py-24">
+      <div class="flex flex-wrap items-end justify-between gap-6 mb-10">
+        <div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+            Dal nostro blog
+          </h2>
+          <p class="mt-3 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+            Consigli pratici da chi vive Ho.Re.Ca tutti i giorni.
+          </p>
+        </div>
+        <a href="/blog" class="inline-flex items-center gap-2 text-clay-accent font-bold" style="font-family: Nunito, sans-serif;">
+          Vai al blog
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {blogPosts.map((post) => (
+          <BlogCard
+            href={`/blog/${post.id}`}
+            title={post.data.title}
+            excerpt={post.data.excerpt}
+            category={post.data.category}
+            publishDate={post.data.publishDate}
+            cover={post.data.cover}
+            coverAlt={post.data.coverAlt}
+            author={post.data.author}
+          />
+        ))}
+      </div>
+    </section>
+    </div>
+  )}
+
+  {/* ContactForm — block (white) */}
+  <div class="bg-clay-canvas relative">
+    <ContactForm origin="homepage" />
+  </div>
+</PageLayout>

@@ -1,0 +1,81 @@
+---
+/**
+ * PhotoCard — section split testo + foto con responsive picture (AVIF/WebP/JPG).
+ * Riusabile per sezioni Storia/Approfondimento di tutte le pagine.
+ */
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+import ClayButton from '~/components/ui/ClayButton.astro';
+
+interface Props {
+  badge?: string;
+  title: string;
+  highlight?: string;
+  paragraphs: string[];
+  /** Path base immagine (es: "/images/page-cards/ristoranti-card") — verranno aggiunti i suffissi -{w}.{ext} */
+  image: string;
+  imageAlt: string;
+  /** Larghezze srcset disponibili (default 400/768/1280) */
+  imageWidths?: number[];
+  imageSide?: 'left' | 'right';
+  cta?: { label: string; href: string };
+}
+const {
+  badge,
+  title,
+  highlight,
+  paragraphs,
+  image,
+  imageAlt,
+  imageWidths = [400, 768, 1280],
+  imageSide = 'right',
+  cta,
+} = Astro.props;
+
+const titleParts = highlight ? title.split(highlight) : [title];
+const avifSrcset = imageWidths.map((w) => `${image}-${w}.avif ${w}w`).join(', ');
+const webpSrcset = imageWidths.map((w) => `${image}-${w}.webp ${w}w`).join(', ');
+const jpgSrcset = imageWidths.map((w) => `${image}-${w}.jpg ${w}w`).join(', ');
+const fallback = `${image}-${Math.max(...imageWidths)}.jpg`;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  <div class={`grid lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center ${imageSide === 'left' ? 'lg:[&>*:first-child]:order-2' : ''}`}>
+    <div data-reveal={imageSide === 'right' ? 'left' : 'right'} class="lg:col-span-7">
+      {badge && <ClayBadge variant="bordeaux" size="md" class="mb-5">{badge}</ClayBadge>}
+      <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+        {highlight ? (
+          <>
+            {titleParts[0]}<span class="clay-text-gradient">{highlight}</span>{titleParts[1]}
+          </>
+        ) : title}
+      </h2>
+      <div class="mt-4 sm:mt-6 flex flex-col gap-3 sm:gap-4 text-base sm:text-lg leading-relaxed text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;">
+        {paragraphs.map((p) => (<p>{p}</p>))}
+      </div>
+      {cta && (
+        <div class="mt-8">
+          <ClayButton href={cta.href} variant="primary" size="lg">{cta.label}</ClayButton>
+        </div>
+      )}
+    </div>
+    <div data-reveal={imageSide === 'right' ? 'right' : 'left'} data-reveal-delay="100" class="lg:col-span-5">
+      <div
+        class="relative overflow-hidden rounded-[28px] sm:rounded-[40px] aspect-[4/3] sm:aspect-square lg:aspect-[4/5] bg-clay-input-bg"
+        style="box-shadow: var(--shadow-clay-card);"
+      >
+        <picture>
+          <source type="image/avif" srcset={avifSrcset} sizes="(max-width: 1024px) 80vw, 480px" />
+          <source type="image/webp" srcset={webpSrcset} sizes="(max-width: 1024px) 80vw, 480px" />
+          <img
+            src={fallback}
+            srcset={jpgSrcset}
+            sizes="(max-width: 1024px) 80vw, 480px"
+            alt={imageAlt}
+            class="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+      </div>
+    </div>
+  </div>
+</section>

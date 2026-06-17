@@ -1,0 +1,61 @@
+---
+interface Props {
+  /** Mapping semantico — vedi brief §4.1 */
+  variant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta';
+  /** Forma */
+  shape?: 'rounded' | 'circle';
+  /** Dimensione */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Animazione breathing (per stat orbs) */
+  breathe?: boolean;
+  class?: string;
+}
+
+const {
+  variant = 'copper',
+  shape = 'rounded',
+  size = 'md',
+  breathe = false,
+  class: className = '',
+} = Astro.props;
+
+const variantClass = {
+  copper:     'clay-orb-copper',
+  bordeaux:   'clay-orb-bordeaux',
+  sage:       'clay-orb-sage',
+  gold:       'clay-orb-gold',
+  cream:      'clay-orb-cream',
+  terracotta: 'clay-orb-terracotta',
+}[variant];
+
+const shapeClass = shape === 'circle' ? 'rounded-full' : 'rounded-2xl';
+
+const sizeClass = {
+  sm: 'h-10 w-10',
+  md: 'h-14 w-14',
+  lg: 'h-20 w-20',
+  xl: 'h-28 w-28',
+}[size];
+
+const iconSizeClass = {
+  sm: '[&_svg]:h-5 [&_svg]:w-5',
+  md: '[&_svg]:h-7 [&_svg]:w-7',
+  lg: '[&_svg]:h-10 [&_svg]:w-10',
+  xl: '[&_svg]:h-14 [&_svg]:w-14',
+}[size];
+---
+<div
+  class={[
+    'inline-flex items-center justify-center shrink-0',
+    variantClass,
+    shapeClass,
+    sizeClass,
+    iconSizeClass,
+    'text-white',
+    breathe && 'animate-clay-breathe',
+    className,
+  ].filter(Boolean).join(' ')}
+  style="box-shadow: var(--shadow-clay-card);"
+>
+  <slot />
+</div>

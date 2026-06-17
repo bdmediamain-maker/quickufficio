@@ -1,0 +1,77 @@
+---
+interface Props {
+  /** primary = gradient peach→copper. secondary = bordeaux. outline = ring no fill. ghost = trasparente */
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  /** Tag wrapper */
+  as?: 'a' | 'button';
+  /** href se as=a */
+  href?: string;
+  /** type per button */
+  type?: 'button' | 'submit' | 'reset';
+  /** Dimensione */
+  size?: 'sm' | 'md' | 'lg';
+  /** Full width */
+  block?: boolean;
+  /** Disabled state */
+  disabled?: boolean;
+  /** Aria-label per icon-only button */
+  ariaLabel?: string;
+  /** Target esterno */
+  target?: string;
+  rel?: string;
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  as: Tag = 'a',
+  href,
+  type = 'button',
+  size = 'md',
+  block = false,
+  disabled = false,
+  ariaLabel,
+  target,
+  rel,
+  class: className = '',
+} = Astro.props;
+
+const sizeClass = {
+  sm: 'h-12 px-6 text-sm',
+  md: 'h-14 px-8 text-base',
+  lg: 'h-16 px-10 text-lg',
+}[size];
+
+const variantClass = {
+  primary: 'clay-button-primary text-white',
+  secondary: 'clay-button-secondary text-white',
+  outline: 'bg-transparent border-2 border-clay-foreground text-clay-foreground',
+  ghost: 'glass-clay text-clay-foreground',
+}[variant];
+
+const shadowVar = variant === 'outline' ? null : variant === 'ghost' ? '--shadow-clay-card' : '--shadow-clay-button';
+const hoverShadowVar = variant === 'ghost' ? '--shadow-clay-card-hover' : '--shadow-clay-button-hover';
+---
+<Tag
+  href={Tag === 'a' ? href : undefined}
+  type={Tag === 'button' ? type : undefined}
+  target={target}
+  rel={rel}
+  aria-label={ariaLabel}
+  disabled={Tag === 'button' && disabled ? true : undefined}
+  class={[
+    'inline-flex items-center justify-center gap-2 rounded-[20px] font-bold tracking-tight transition-all duration-200',
+    'hover:-translate-y-1 active:scale-[0.92]',
+    'disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0',
+    'whitespace-nowrap',
+    sizeClass,
+    variantClass,
+    block ? 'w-full' : '',
+    className,
+  ].filter(Boolean).join(' ')}
+  style={`font-family: Nunito, sans-serif;${shadowVar ? ` box-shadow: var(${shadowVar});` : ''}`}
+  onmouseover={shadowVar ? `this.style.boxShadow = 'var(${hoverShadowVar})'` : undefined}
+  onmouseout={shadowVar ? `this.style.boxShadow = 'var(${shadowVar})'` : undefined}
+>
+  <slot />
+</Tag>

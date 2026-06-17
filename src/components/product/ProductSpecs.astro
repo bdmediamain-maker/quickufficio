@@ -1,0 +1,26 @@
+---
+interface Spec { label: string; value: string; }
+interface Props {
+  specs: Spec[];
+  title?: string;
+}
+const { specs, title = 'Specifiche tecniche' } = Astro.props;
+---
+<section class="container-clay py-10 sm:py-14 lg:py-16">
+  <div
+    class="glass-clay rounded-[32px] p-6 sm:p-10"
+    style="box-shadow: var(--shadow-clay-card);"
+  >
+    <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-6" style="font-family: Nunito, sans-serif;">
+      {title}
+    </h2>
+    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+      {specs.map((s) => (
+        <div class="flex justify-between gap-4 py-3 border-b border-clay-foreground/10">
+          <dt class="text-sm text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;">{s.label}</dt>
+          <dd class="text-sm text-clay-foreground text-right font-bold" style="font-family: Nunito, sans-serif;">{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

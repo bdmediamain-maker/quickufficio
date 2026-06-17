@@ -1,0 +1,134 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+import ClayButton from '~/components/ui/ClayButton.astro';
+import ProductSpecs from '~/components/product/ProductSpecs.astro';
+import ProductCard from '~/components/product/ProductCard.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const products = await getCollection('products');
+  return products.map((product) => ({
+    params: { slug: product.id.replace(/\.mdx$/, '') },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+const { Content } = await render(product);
+
+const allProducts = await getCollection('products');
+const related = allProducts
+  .filter((p) => p.data.category === product.data.category && p.id !== product.id)
+  .slice(0, 3);
+
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.data.title,
+  description: product.data.shortDescription,
+  image: new URL(product.data.image, Astro.site ?? 'https://quickufficio.com').toString(),
+  brand: { '@type': 'Brand', name: product.data.brand },
+  category: product.data.category,
+  offers: {
+    '@type': 'Offer',
+    availability: product.data.available ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+    priceCurrency: 'EUR',
+    seller: { '@type': 'Organization', name: 'Quickufficio.com Srls' },
+  },
+};
+---
+<PageLayout
+  title={`${product.data.title} — ${product.data.brand} ${product.data.category}`}
+  description={product.data.shortDescription}
+  blobs="warm"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  </Fragment>
+
+  <div class="container-clay pt-2 pb-6">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Hardware', href: '/hardware' },
+      { label: product.data.category, href: '/hardware' },
+      { label: product.data.title },
+    ]} />
+  </div>
+
+  <section class="container-clay py-8">
+    <div class="grid lg:grid-cols-12 gap-12 items-start">
+      <div class="lg:col-span-6">
+        <div
+          class="aspect-square rounded-[40px] bg-clay-card-solid p-6 sm:p-10 relative overflow-hidden"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <div
+            class="absolute inset-6 sm:inset-10 rounded-[32px] bg-clay-canvas overflow-hidden flex items-center justify-center"
+            style="box-shadow: var(--shadow-clay-pressed);"
+          >
+            <img src={product.data.image} alt={product.data.imageAlt} class="max-h-full max-w-full object-contain p-6" loading="eager" />
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-6 flex flex-col gap-6 lg:pt-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <ClayBadge variant="copper" size="md">{product.data.brand}</ClayBadge>
+          <ClayBadge variant="gold" size="md">{product.data.category}</ClayBadge>
+          {product.data.featured && <ClayBadge variant="bordeaux" size="md">⭐ Top venduto</ClayBadge>}
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {product.data.title}
+        </h1>
+        <p class="text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {product.data.shortDescription}
+        </p>
+
+        <div class="prose prose-clay max-w-none">
+          <Content />
+        </div>
+
+        <div class="flex flex-wrap gap-4 mt-2">
+          <ClayButton href="/prenota-demo" variant="primary" size="lg">
+            Prenota demo
+          </ClayButton>
+          <ClayButton href="tel:+390122675000" variant="ghost" size="lg">
+            Richiedi preventivo
+          </ClayButton>
+        </div>
+
+        <div class="mt-4 rounded-2xl glass-clay p-5" style="box-shadow: var(--shadow-clay-card);">
+          <p class="text-sm text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+            <strong class="text-clay-foreground">Installazione inclusa.</strong> Veniamo in struttura per montaggio, configurazione col gestionale e formazione iniziale. Garanzia 24 mesi + supporto telefonico 7/7.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ProductSpecs specs={product.data.specs} />
+
+  {related.length > 0 && (
+    <section class="container-clay py-10 sm:py-16 lg:py-24">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight mb-10" style="font-family: Nunito, sans-serif;">
+        Prodotti correlati
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {related.map((p) => (
+          <ProductCard
+            href={`/prodotti/${p.id.replace(/\.mdx$/, '')}`}
+            title={p.data.title}
+            brand={p.data.brand}
+            category={p.data.category}
+            image={p.data.image}
+            imageAlt={p.data.imageAlt}
+            shortDescription={p.data.shortDescription}
+            available={p.data.available}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+</PageLayout>

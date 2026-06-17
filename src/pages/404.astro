@@ -1,0 +1,38 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+---
+<PageLayout title="Pagina non trovata" noindex={true}>
+  <div aria-hidden="true" class="pointer-events-none fixed inset-0 overflow-hidden -z-10">
+    <div class="absolute top-[15%] left-[10%] h-64 w-64 rounded-full bg-clay-accent/12 blur-3xl animate-clay-float"></div>
+    <div class="absolute bottom-[20%] right-[15%] h-72 w-72 rounded-full bg-clay-accent-alt/10 blur-3xl animate-clay-float-delayed animation-delay-2000"></div>
+  </div>
+
+  <section class="container-clay min-h-[80vh] flex items-center">
+    <div class="max-w-2xl">
+      <p style="font-family: Nunito, sans-serif;" class="font-black text-7xl sm:text-8xl clay-text-gradient leading-none">404</p>
+      <h1 style="font-family: Nunito, sans-serif;" class="mt-6 text-3xl sm:text-4xl font-extrabold">
+        Hai cercato qualcosa che non c'è
+      </h1>
+      <p class="mt-4 text-lg text-clay-muted leading-relaxed font-medium">
+        Forse la pagina è stata spostata, oppure il link è vecchio.
+        Torna alla home o chiama Sergio.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center h-14 px-8 rounded-[20px] clay-button-primary text-white font-bold tracking-tight shadow-[var(--shadow-clay-button)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-clay-button-hover)] active:scale-[0.92]"
+          style="font-family: Nunito, sans-serif;"
+        >
+          Torna alla home
+        </a>
+        <a
+          href="tel:+390122675000"
+          class="inline-flex items-center justify-center h-14 px-8 rounded-[20px] glass-clay text-clay-foreground font-bold tracking-tight shadow-[var(--shadow-clay-card)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-clay-card-hover)]"
+          style="font-family: Nunito, sans-serif;"
+        >
+          0122 675000
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

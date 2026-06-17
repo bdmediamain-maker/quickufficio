@@ -1,0 +1,42 @@
+---
+import ClayInput from '~/components/ui/ClayInput.astro';
+import ClayButton from '~/components/ui/ClayButton.astro';
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+const {
+  title = 'Resta aggiornato',
+  subtitle = "Consigli pratici per ridurre commissioni, controllare i costi e gestire meglio l'attività. Una mail al mese, niente spam.",
+} = Astro.props;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  <div
+    data-reveal="scale"
+    class="rounded-[40px] bg-clay-foreground text-clay-canvas p-6 sm:p-10 lg:p-16 grid lg:grid-cols-2 gap-10 items-center"
+    style="box-shadow: var(--shadow-clay-surface);"
+  >
+    <div>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+        {title}
+      </h2>
+      <p class="mt-4 text-lg text-clay-canvas/80 leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+        {subtitle}
+      </p>
+    </div>
+    <form method="POST" action="/api/newsletter" class="flex flex-col sm:flex-row gap-3">
+      <ClayInput
+        type="email"
+        name="email"
+        placeholder="La tua email"
+        required
+        autocomplete="email"
+        class="flex-1"
+      />
+      <ClayButton as="button" type="submit" variant="primary" size="lg">
+        Iscrivimi
+      </ClayButton>
+    </form>
+  </div>
+</section>

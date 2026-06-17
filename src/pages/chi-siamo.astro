@@ -1,0 +1,192 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import StorySection from '~/components/sections/StorySection.astro';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import ThreePillars from '~/components/sections/ThreePillars.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import TestimonialCarousel from '~/components/sections/TestimonialCarousel.astro';
+import MapEmbed from '~/components/sections/MapEmbed.astro';
+import BookingEmbed from '~/components/sections/BookingEmbed.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import IconOrb from '~/components/ui/IconOrb.astro';
+import { icons } from '~/lib/icons';
+import { getCollection } from 'astro:content';
+
+const testimonialsAll = await getCollection('testimonials');
+testimonialsAll.sort((a, b) => {
+  const score = (t: typeof a) => (t.data.featured ? 2 : 0) + (t.data.verified ? 1 : 0);
+  return score(b) - score(a);
+});
+const testimonials = testimonialsAll.map((t) => ({
+  id: t.data.id,
+  name: t.data.name,
+  role: t.data.role,
+  business: t.data.business,
+  location: t.data.location,
+  quote: t.data.extendedQuote ?? t.data.quote,
+  avatar: t.data.avatar,
+}));
+
+const pillars = [
+  {
+    title: 'Ascolto, non vendita',
+    description: "Sergio dedica 30-60 minuti per capire come lavori prima di proporre qualsiasi cosa. Niente venditori che ti spingono il prodotto della settimana.",
+    icon: icons.headphones,
+    variant: 'copper' as const,
+  },
+  {
+    title: 'Filiera unica',
+    description: "Hardware, software, formazione e assistenza: tutto da noi. Un solo numero, niente palleggi tra fornitori quando qualcosa non funziona.",
+    icon: icons.refreshCw,
+    variant: 'bordeaux' as const,
+  },
+  {
+    title: 'Resilienza nel tempo',
+    description: "20 anni di Ho.Re.Ca, 33 anni di partnership con Lasersoft. Non spariamo mai e mai abbiamo lasciato un cliente senza assistenza.",
+    icon: icons.shield,
+    variant: 'sage' as const,
+  },
+];
+
+const team = [
+  {
+    name: 'Sergio',
+    role: 'Fondatore & CEO',
+    bio: "Ho passato 15 anni a vedere ristoratori e albergatori frustrati con software che non funzionavano per loro. Nel 2015 ho fondato Quickufficio per cambiare le regole del gioco: ascolto prima, propongo dopo, e ti seguo per anni. La cosa di cui sono più orgoglioso? Avere clienti che mi chiamano per fare due chiacchiere, non solo per emergenze.",
+    photo: "/images/legacy/team/sergio-original.jpg",
+    variant: 'copper' as const,
+  },
+  {
+    name: 'Emanuela',
+    role: 'Direzione & Customer Success',
+    bio: "Gestisco la parte operativa di Quickufficio: pianificazione installazioni, follow-up clienti, parte amministrativa. Lavoro per fare in modo che ogni cliente abbia la stessa attenzione del primo giorno, anche dopo 5 anni. Il mio lavoro preferito? Quando un cliente nuovo passa dal panico al sorriso nei primi 30 giorni.",
+    photo: "/images/legacy/team/emanuela-original.png",
+    variant: 'bordeaux' as const,
+  },
+];
+---
+<PageLayout
+  title="Chi siamo — Sergio, Emanuela e 20 anni di Ho.Re.Ca italiano"
+  description="Quickufficio nasce nel 2015 a Susa (TO) dalla volontà di Sergio di rivoluzionare il rapporto tra software gestionali e attività Ho.Re.Ca italiane. 100+ clienti, 20 anni di esperienza."
+  blobs="warm"
+>
+  <ClayHero
+    badge="Susa · Italia · 2015"
+    title="Una vita passata per automatizzare attività italiane"
+    highlight="automatizzare"
+    subtitle="Sono Sergio. Vendo soluzioni, non software. Quickufficio è il risultato di 20 anni passati ad aiutare ristoratori e albergatori italiani a riprendere il controllo della loro attività."
+    primaryCta={{ label: 'Parla con me', href: '/prenota-demo' }}
+    secondaryCta={{ label: 'Chiama 0122 675000', href: 'tel:+390122675000', variant: 'ghost' }}
+    backgroundImage="/images/hero/chi-siamo"
+    backgroundAlt="Team Quickufficio al lavoro intorno a un tavolo di riunione"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="Il metodo Quickufficio"
+    title="Prima il problema, poi la soluzione"
+    highlight="poi la soluzione"
+    paragraphs={[
+      "La prima cosa che facciamo con un nuovo cliente non è parlare di software. È ascoltare: dove perdi tempo? Dove spariscono i soldi? Dove arrivano i problemi nei momenti peggiori?",
+      "Solo dopo aver capito il tuo modo di lavorare ti proponiamo gli strumenti giusti. Spesso scopriamo che bastano 2-3 moduli mirati invece dell'intero ecosistema.",
+    ]}
+    image="/images/page-cards/chi-siamo-card"
+    imageAlt="Riunione di team in ufficio moderno, schermi e laptop sul tavolo"
+    imageSide="right"
+    cta={{ label: 'Prenota una consulenza', href: '/prenota-demo' }}
+  />
+
+  <StorySection
+    badge="La storia"
+    title="Nato nel 2015. Cresciuto in cucina e in reception."
+    highlight="in cucina e in reception"
+    paragraphs={[
+      "Quickufficio nasce nel 2015 a Susa, in provincia di Torino, dalla volontà di Sergio Perottino. Dopo 15 anni passati come consulente per software gestionali, Sergio decide di rifondare il modo in cui questi prodotti vengono venduti e supportati nel settore Ho.Re.Ca italiano.",
+      "Il sospetto era semplice: i software erano buoni, ma il modo in cui venivano proposti era pessimo. Venditori che non capivano il settore, fornitori che sparivano dopo l'installazione, prezzi nascosti, contratti capestro.",
+      "Quickufficio è la risposta: ascoltiamo prima, scegliamo dopo, e restiamo presenti negli anni. Lavoriamo con un solo principio: il software è uno strumento, la vera trasformazione è organizzativa. Ti aiutiamo a trasformare la tua attività, partendo dagli strumenti giusti.",
+    ]}
+    image="/images/legacy/team/sergio-original.jpg"
+    imageAlt="Sergio, fondatore di Quickufficio, in struttura presso un cliente"
+    imageSide="right"
+  />
+
+  <section class="container-clay py-10 sm:py-16 lg:py-24">
+    <div class="grid lg:grid-cols-2 gap-12">
+      <article class="glass-clay rounded-[40px] p-5 sm:p-6 lg:p-8 lg:p-12" style="box-shadow: var(--shadow-clay-card);">
+        <IconOrb variant="copper" size="lg" shape="rounded">
+          <Fragment set:html={icons.star} />
+        </IconOrb>
+        <h2 class="mt-6 text-3xl sm:text-4xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">
+          La nostra Vision
+        </h2>
+        <p class="mt-4 text-lg text-clay-foreground leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          Un settore Ho.Re.Ca italiano dove imprenditori e gestori passano più tempo a pensare strategia che a chiudere conti e contare scorte. Dove il software è invisibile perché funziona, e l'energia umana torna a concentrarsi sull'ospitalità.
+        </p>
+      </article>
+      <article class="glass-clay rounded-[40px] p-5 sm:p-6 lg:p-8 lg:p-12" style="box-shadow: var(--shadow-clay-card);">
+        <IconOrb variant="bordeaux" size="lg" shape="rounded">
+          <Fragment set:html={icons.trendingUp} />
+        </IconOrb>
+        <h2 class="mt-6 text-3xl sm:text-4xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">
+          La nostra Mission
+        </h2>
+        <p class="mt-4 text-lg text-clay-foreground leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          Selezionare, installare e mantenere nel tempo le soluzioni software e hardware più adatte ad ogni attività italiana del settore Ho.Re.Ca. Restare al fianco dei clienti come partner tecnologici di lungo periodo, sempre disponibili, sempre raggiungibili.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="container-clay py-10 sm:py-16 lg:py-24">
+    <div class="max-w-3xl mb-12">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+        Il team
+      </h2>
+      <p class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+        Una squadra piccola, dedicata, italiana. Niente call center, niente intermediari: parli direttamente con chi installa e supporta.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {team.map((m) => (
+        <article
+          class="glass-clay rounded-[32px] overflow-hidden grid grid-cols-1 sm:grid-cols-12"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <div class="sm:col-span-5 aspect-square sm:aspect-auto sm:min-h-[320px] relative bg-clay-input-bg">
+            <img src={m.photo} alt={`Ritratto di ${m.name}, ${m.role}`} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+          </div>
+          <div class="sm:col-span-7 p-5 sm:p-6 lg:p-8 flex flex-col justify-center gap-3">
+            <h3 class="text-2xl sm:text-3xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">{m.name}</h3>
+            <p class="text-sm uppercase tracking-widest text-clay-accent font-bold" style="font-family: 'DM Sans', sans-serif;">{m.role}</p>
+            <p class="text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">{m.bio}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <StackingCards
+    badge="Differenze concrete"
+    title="Perché sceglierci"
+    highlight="sceglierci"
+    subtitle="Tre cose che ci differenziano dai fornitori generalisti. Scrolla per vedere le card stack."
+    cards={pillars}
+  />
+
+  <TestimonialCarousel
+    title="Cosa dicono i clienti"
+    subtitle="Mostriamo solo testimonial reali. Niente stock photo, niente review fasulle."
+    testimonials={testimonials}
+    variant="grid"
+  />
+
+  <MapEmbed
+    title="Quickufficio.com Srls"
+    address="Susa (TO) — Italia"
+  />
+
+  <BookingEmbed origin="chi-siamo" />
+
+  <ContactForm origin="chi-siamo" />
+</PageLayout>

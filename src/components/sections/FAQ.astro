@@ -1,0 +1,54 @@
+---
+interface Item { question: string; answer: string; }
+interface Props {
+  title?: string;
+  subtitle?: string;
+  items: Item[];
+  /** Genera JSON-LD FAQPage schema */
+  schema?: boolean;
+}
+
+const { title = 'Domande frequenti', subtitle, items, schema = true } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((it) => ({
+    '@type': 'Question',
+    name: it.question,
+    acceptedAnswer: { '@type': 'Answer', text: it.answer },
+  })),
+};
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  <div class="grid lg:grid-cols-12 gap-12">
+    <div class="lg:col-span-4">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+        {title}
+      </h2>
+      {subtitle && (
+        <p class="mt-5 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+    <div data-reveal-stagger class="lg:col-span-8 flex flex-col gap-4">
+      {items.map((it) => (
+        <details data-reveal class="group glass-clay rounded-2xl px-6 py-5 open:bg-clay-canvas transition-all" style="box-shadow: var(--shadow-clay-card);">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer list-none text-lg sm:text-xl font-extrabold text-clay-foreground" style="font-family: Nunito, sans-serif;">
+            <span>{it.question}</span>
+            <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full clay-button-primary text-white transition-transform duration-300 group-open:rotate-45" style="box-shadow: var(--shadow-clay-button);" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+            {it.answer}
+          </p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+{schema && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+)}

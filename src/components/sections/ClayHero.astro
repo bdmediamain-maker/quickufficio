@@ -1,0 +1,204 @@
+---
+import ClayButton from '~/components/ui/ClayButton.astro';
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+
+interface CTA { label: string; href: string; variant?: 'primary' | 'ghost'; }
+interface Props {
+  eyebrow?: string;
+  badge?: string;
+  title: string;
+  /** Porzione del titolo con clay-text-gradient (deve essere sottostringa di title) */
+  highlight?: string;
+  subtitle?: string;
+  primaryCta?: CTA;
+  secondaryCta?: CTA;
+  /** Slot illustration laterale */
+  hasIllustration?: boolean;
+  /** Foto background full-bleed. Es: "/images/hero/restaurant" — verrà composto srcset 400/768/1280/1920 */
+  backgroundImage?: string;
+  /** Alt del background (decorativo se vuoto) */
+  backgroundAlt?: string;
+  align?: 'left' | 'center';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  eyebrow,
+  badge,
+  title,
+  highlight,
+  subtitle,
+  primaryCta,
+  secondaryCta,
+  hasIllustration = false,
+  backgroundImage,
+  backgroundAlt = '',
+  align = 'left',
+  size = 'lg',
+} = Astro.props;
+
+const titleParts = highlight
+  ? title.split(highlight)
+  : [title];
+
+const sizeClass = {
+  sm: 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl',
+  md: 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl',
+  lg: 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl',
+}[size];
+
+const alignClass = align === 'center' ? 'text-center mx-auto items-center' : '';
+
+// Quando c'è backgroundImage, ignoriamo l'illustration column per usare full-width
+const useBackground = !!backgroundImage;
+const showIllustration = hasIllustration && !useBackground;
+---
+{useBackground ? (
+  <section class="relative isolate overflow-hidden -mt-24 sm:-mt-28">
+    {/* Background image responsive — picture con AVIF/WebP/JPG fallback */}
+    <picture class="absolute inset-0 -z-10">
+      <source
+        type="image/avif"
+        srcset={`${backgroundImage}-400.avif 400w, ${backgroundImage}-768.avif 768w, ${backgroundImage}-1280.avif 1280w, ${backgroundImage}-1920.avif 1920w`}
+        sizes="100vw"
+      />
+      <source
+        type="image/webp"
+        srcset={`${backgroundImage}-400.webp 400w, ${backgroundImage}-768.webp 768w, ${backgroundImage}-1280.webp 1280w, ${backgroundImage}-1920.webp 1920w`}
+        sizes="100vw"
+      />
+      <img
+        src={`${backgroundImage}-1280.jpg`}
+        srcset={`${backgroundImage}-400.jpg 400w, ${backgroundImage}-768.jpg 768w, ${backgroundImage}-1280.jpg 1280w, ${backgroundImage}-1920.jpg 1920w`}
+        sizes="100vw"
+        alt={backgroundAlt}
+        class="h-full w-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+
+    {/* Overlay neutro per leggibilità testo — niente tint colorato, foto preservata */}
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 -z-10"
+      style="background:
+        linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.70) 100%),
+        linear-gradient(95deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.20) 50%, rgba(0,0,0,0.05) 100%);"
+    ></div>
+
+    <div class="container-clay pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pt-44 lg:pb-40 min-h-screen flex flex-col justify-center">
+      <div class={`max-w-4xl flex flex-col ${alignClass}`}>
+        {(eyebrow || badge) && (
+          <div data-reveal data-reveal-delay="100" class={`mb-6 flex items-center gap-3 ${align === 'center' ? 'justify-center' : ''}`}>
+            {badge && <ClayBadge variant="copper" size="md">{badge}</ClayBadge>}
+            {eyebrow && (
+              <p class="text-sm uppercase tracking-widest text-clay-canvas/85 font-bold" style="font-family: 'DM Sans', sans-serif;">
+                {eyebrow}
+              </p>
+            )}
+          </div>
+        )}
+        <h1
+          data-reveal="blur"
+          data-reveal-delay="200"
+          class={`font-black tracking-tight leading-[1.05] text-clay-canvas drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)] ${sizeClass}`}
+          style="font-family: Nunito, sans-serif;"
+        >
+          {highlight ? (
+            <>
+              {titleParts[0]}
+              <span style="background: linear-gradient(135deg, #FFFFFF 10%, #E0B0E8 55%, #D08AD0 100%); -webkit-background-clip: text; background-clip: text; color: transparent;">{highlight}</span>
+              {titleParts[1]}
+            </>
+          ) : title}
+        </h1>
+        {subtitle && (
+          <p data-reveal data-reveal-delay="400" class="mt-4 sm:mt-6 md:mt-8 text-base sm:text-lg md:text-xl text-clay-canvas/90 max-w-2xl leading-relaxed font-medium drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]" style="font-family: 'DM Sans', sans-serif;">
+            {subtitle}
+          </p>
+        )}
+        {(primaryCta || secondaryCta) && (
+          <div data-reveal data-reveal-delay="500" class={`mt-6 sm:mt-10 flex flex-wrap gap-3 sm:gap-4 ${align === 'center' ? 'justify-center' : ''}`}>
+            {primaryCta && (
+              <ClayButton href={primaryCta.href} variant={primaryCta.variant ?? 'primary'} size="lg">
+                {primaryCta.label}
+              </ClayButton>
+            )}
+            {secondaryCta && (
+              <ClayButton href={secondaryCta.href} variant={secondaryCta.variant ?? 'ghost'} size="lg">
+                {secondaryCta.label}
+              </ClayButton>
+            )}
+          </div>
+        )}
+        <slot />
+      </div>
+    </div>
+
+  </section>
+) : (
+  <section class="container-clay pt-8 pb-16 sm:pt-12 sm:pb-24">
+    <div class={`grid ${showIllustration ? 'lg:grid-cols-12' : ''} gap-12 lg:gap-16 items-center`}>
+      <div class={`${showIllustration ? 'lg:col-span-7' : ''} flex flex-col ${alignClass} max-w-4xl`}>
+        {(eyebrow || badge) && (
+          <div data-reveal data-reveal-delay="100" class={`mb-6 flex items-center gap-3 ${align === 'center' ? 'justify-center' : ''}`}>
+            {badge && <ClayBadge variant="copper" size="md">{badge}</ClayBadge>}
+            {eyebrow && (
+              <p class="text-sm uppercase tracking-widest text-clay-muted font-bold" style="font-family: 'DM Sans', sans-serif;">
+                {eyebrow}
+              </p>
+            )}
+          </div>
+        )}
+        <h1
+          data-reveal="blur"
+          data-reveal-delay="200"
+          class={`font-black tracking-tight leading-[1.05] ${sizeClass}`}
+          style="font-family: Nunito, sans-serif;"
+        >
+          {highlight ? (
+            <>
+              {titleParts[0]}
+              <span class="clay-text-gradient">{highlight}</span>
+              {titleParts[1]}
+            </>
+          ) : title}
+        </h1>
+        {subtitle && (
+          <p data-reveal data-reveal-delay="400" class="mt-4 sm:mt-6 md:mt-8 text-base sm:text-lg md:text-xl text-clay-muted max-w-2xl leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+            {subtitle}
+          </p>
+        )}
+        {(primaryCta || secondaryCta) && (
+          <div data-reveal data-reveal-delay="500" class={`mt-6 sm:mt-10 flex flex-wrap gap-3 sm:gap-4 ${align === 'center' ? 'justify-center' : ''}`}>
+            {primaryCta && (
+              <ClayButton href={primaryCta.href} variant={primaryCta.variant ?? 'primary'} size="lg">
+                {primaryCta.label}
+              </ClayButton>
+            )}
+            {secondaryCta && (
+              <ClayButton href={secondaryCta.href} variant={secondaryCta.variant ?? 'ghost'} size="lg">
+                {secondaryCta.label}
+              </ClayButton>
+            )}
+          </div>
+        )}
+      </div>
+
+      {showIllustration && (
+        <div class="lg:col-span-5 relative min-h-[320px] sm:min-h-[480px]">
+          <slot name="illustration">
+            <div class="relative h-full w-full">
+              <div class="absolute top-0 right-10 h-48 w-48 sm:h-64 sm:w-64 rounded-full clay-orb-copper animate-clay-float" style="box-shadow: var(--shadow-clay-card);"></div>
+              <div class="absolute bottom-12 right-0 h-40 w-40 sm:h-56 sm:w-56 rounded-[40px] clay-orb-bordeaux animate-clay-float-delayed animation-delay-2000" style="box-shadow: var(--shadow-clay-card);"></div>
+              <div class="absolute top-1/3 left-4 h-32 w-32 sm:h-40 sm:w-40 rounded-[32px] clay-orb-gold animate-clay-float-slow animation-delay-4000" style="box-shadow: var(--shadow-clay-card);"></div>
+              <div class="absolute bottom-0 left-16 h-28 w-28 rounded-full clay-orb-sage animate-clay-breathe" style="box-shadow: var(--shadow-clay-card);"></div>
+            </div>
+          </slot>
+        </div>
+      )}
+    </div>
+  </section>
+)}

@@ -1,0 +1,89 @@
+---
+import IconOrb from '~/components/ui/IconOrb.astro';
+
+interface Feature {
+  title: string;
+  description: string;
+  /** Lucide icon SVG path */
+  icon?: string;
+  iconVariant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta';
+  href?: string;
+  /** Hero card 2x2 */
+  large?: boolean;
+  /** Image opzionale per hero card */
+  image?: string;
+  imageAlt?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  features: Feature[];
+}
+
+const { title, subtitle, features } = Astro.props;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  {(title || subtitle) && (
+    <div class="max-w-3xl mb-8 sm:mb-12 lg:mb-16">
+      {title && (
+        <h2 data-reveal class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p data-reveal data-reveal-delay="100" class="mt-5 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+
+  <div data-reveal-stagger class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 auto-rows-[minmax(220px,auto)]">
+    {features.map((f) => {
+      const Tag = f.href ? 'a' : 'div';
+      const spanClass = f.large ? 'sm:col-span-2 sm:row-span-2 md:col-span-2 lg:col-span-2 md:row-span-2' : '';
+      return (
+        <Tag
+          data-reveal
+          href={f.href}
+          class={`group relative glass-clay p-5 sm:p-6 lg:p-8 rounded-[32px] flex flex-col gap-4 transition-all duration-500 hover:-translate-y-2 ${spanClass} ${f.large ? 'min-h-[320px] sm:min-h-[380px] lg:min-h-[420px]' : ''}`}
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          {f.image && f.large && (
+            <div
+              class="absolute top-6 right-6 sm:top-8 sm:right-8 w-1/2 max-w-[220px] aspect-square rounded-[24px] overflow-hidden bg-clay-canvas/40"
+              style="box-shadow: var(--shadow-clay-card);"
+            >
+              <img src={f.image} alt={f.imageAlt ?? ''} class="h-full w-full object-cover" loading="lazy" />
+            </div>
+          )}
+          {f.icon && (
+            <IconOrb variant={f.iconVariant ?? 'copper'} size={f.large ? 'lg' : 'md'}>
+              <Fragment set:html={f.icon} />
+            </IconOrb>
+          )}
+          <div class={f.large ? 'mt-auto max-w-[80%]' : ''}>
+            <h3
+              class={`font-extrabold tracking-tight ${f.large ? 'text-2xl sm:text-3xl lg:text-4xl' : 'text-lg sm:text-xl lg:text-2xl'}`}
+              style="font-family: Nunito, sans-serif;"
+            >
+              {f.title}
+            </h3>
+            <p class={`text-clay-muted leading-relaxed font-medium ${f.large ? 'mt-3 sm:mt-4 text-base sm:text-lg' : 'mt-2 text-sm sm:text-base'}`} style="font-family: 'DM Sans', sans-serif;">
+              {f.description}
+            </p>
+          </div>
+          {f.href && (
+            <span class="mt-auto inline-flex items-center gap-2 text-clay-accent font-bold text-sm group-hover:gap-3 transition-all" style="font-family: Nunito, sans-serif;">
+              Scopri di più
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </span>
+          )}
+        </Tag>
+      );
+    })}
+  </div>
+</section>

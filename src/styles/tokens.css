@@ -1,0 +1,48 @@
+/* ============================================================
+   DESIGN TOKENS — Purple Brand
+   Palette richiesta cliente: viola primario + bianco.
+   Sostituisce la palette "Hospitality Warm" originale del brief §4.1.
+   ============================================================ */
+
+:root {
+  /* Canvas */
+  --clay-canvas:        #FFFFFF;
+
+  /* Foreground */
+  --clay-foreground:    #1A0F1F;
+  --clay-muted:         #5C4A60;
+
+  /* Accenti viola */
+  --clay-accent:           #800080;   /* Purple primary */
+  --clay-accent-alt:       #5C005C;   /* Deep purple */
+  --clay-accent-warm:      #C04ECF;   /* Light purple */
+  --clay-accent-sage:      #A040A0;   /* Medium violet */
+  --clay-accent-gold:      #D08AD0;   /* Lavanda */
+  --clay-accent-terracotta:#6B005A;   /* Deep magenta */
+
+  /* Surface */
+  --clay-card-bg:       rgba(255, 255, 255, 0.72);
+  --clay-card-solid:    #FFFFFF;
+  --clay-input-bg:      #F5EDF7;
+
+  /* Shadow helpers */
+  --clay-shadow-deep:   #CFC4D4;
+  --clay-shadow-light:  #FFFFFF;
+  --clay-shadow-press:  #E0D4E6;
+
+  /* Layout */
+  --container-max:        1280px;
+  --section-py-mobile:    4rem;
+  --section-py-desktop:   8rem;
+  --container-padding-x:  clamp(1rem, 4vw, 2rem);
+
+  /* Pesi */
+  --fw-bold:      700;
+  --fw-extrabold: 800;
+  --fw-black:     900;
+
+  /* Line-height */
+  --lh-tight:    1.1;
+  --lh-snug:     1.25;
+  --lh-relaxed:  1.625;
+}

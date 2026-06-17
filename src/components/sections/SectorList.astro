@@ -1,0 +1,59 @@
+---
+import IconOrb from '~/components/ui/IconOrb.astro';
+
+interface Sector {
+  label: string;
+  icon: string;
+  variant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta';
+  href?: string;
+}
+interface Props {
+  title?: string;
+  subtitle?: string;
+  sectors: Sector[];
+}
+
+const { title, subtitle, sectors } = Astro.props;
+const fallback = ['copper', 'bordeaux', 'sage', 'gold', 'cream', 'terracotta', 'copper'] as const;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  {(title || subtitle) && (
+    <div class="max-w-3xl mb-10">
+      {title && (
+        <h2 data-reveal class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p data-reveal data-reveal-delay="100" class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+
+  <div data-reveal-stagger class="flex flex-wrap gap-4">
+    {sectors.map((s, i) => {
+      const variant = s.variant ?? fallback[i % fallback.length];
+      const Tag = s.href ? 'a' : 'div';
+      return (
+        <Tag
+          data-reveal="scale"
+          href={s.href}
+          class="group inline-flex items-center gap-4 px-5 sm:px-6 py-4 rounded-[24px] glass-clay transition-all duration-300 hover:-translate-y-1"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <IconOrb variant={variant} size="sm" shape="rounded">
+            <Fragment set:html={s.icon} />
+          </IconOrb>
+          <span
+            class="text-base sm:text-lg font-extrabold text-clay-foreground"
+            style="font-family: Nunito, sans-serif;"
+          >
+            {s.label}
+          </span>
+        </Tag>
+      );
+    })}
+  </div>
+</section>

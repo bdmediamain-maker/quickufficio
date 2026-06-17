@@ -1,0 +1,61 @@
+---
+/**
+ * Sezione 3 colonne Assistenza · Formazione · Resilienza (brief §5.1 step 8).
+ * Riusabile in pagine prodotto come "punti di forza".
+ */
+import IconOrb from '~/components/ui/IconOrb.astro';
+
+interface Pillar {
+  title: string;
+  description: string;
+  icon: string;
+  variant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta';
+}
+interface Props {
+  title?: string;
+  subtitle?: string;
+  pillars: Pillar[];
+}
+
+const { title, subtitle, pillars } = Astro.props;
+const fallback = ['copper', 'bordeaux', 'sage', 'gold'] as const;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  {(title || subtitle) && (
+    <div class="max-w-3xl mb-8 sm:mb-12 lg:mb-16">
+      {title && (
+        <h2 data-reveal class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p data-reveal data-reveal-delay="100" class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+
+  <div data-reveal-stagger class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+    {pillars.map((p, i) => {
+      const variant = p.variant ?? fallback[i % fallback.length];
+      return (
+        <article
+          data-reveal
+          class="glass-clay rounded-[32px] p-5 sm:p-6 lg:p-8 lg:p-10 flex flex-col gap-5 transition-all duration-500 hover:-translate-y-2"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <IconOrb variant={variant} size="lg" shape="rounded">
+            <Fragment set:html={p.icon} />
+          </IconOrb>
+          <h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+            {p.title}
+          </h3>
+          <p class="text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+            {p.description}
+          </p>
+        </article>
+      );
+    })}
+  </div>
+</section>

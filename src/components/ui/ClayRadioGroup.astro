@@ -1,0 +1,63 @@
+---
+interface Option {
+  value: string;
+  label: string;
+  icon?: string;
+}
+interface Props {
+  name: string;
+  label?: string;
+  options: Option[];
+  required?: boolean;
+  defaultValue?: string;
+  columns?: 2 | 3 | 4;
+  class?: string;
+}
+
+const {
+  name,
+  label,
+  options,
+  required = false,
+  defaultValue,
+  columns = 3,
+  class: className = '',
+} = Astro.props;
+
+const colClass = { 2: 'grid-cols-2', 3: 'grid-cols-2 sm:grid-cols-3', 4: 'grid-cols-2 sm:grid-cols-4' }[columns];
+---
+<fieldset class={`flex flex-col gap-3 ${className}`}>
+  {label && (
+    <legend
+      class="font-medium text-sm text-clay-foreground mb-1"
+      style="font-family: 'DM Sans', sans-serif;"
+    >
+      {label}{required && <span class="text-clay-accent ml-0.5" aria-hidden="true">*</span>}
+    </legend>
+  )}
+  <div class={`grid ${colClass} gap-3`}>
+    {options.map((opt) => (
+      <label
+        for={`${name}-${opt.value}`}
+        class="group relative cursor-pointer"
+      >
+        <input
+          type="radio"
+          id={`${name}-${opt.value}`}
+          name={name}
+          value={opt.value}
+          required={required}
+          checked={defaultValue === opt.value}
+          class="peer sr-only"
+        />
+        <div
+          class="flex flex-col items-center justify-center gap-2 h-20 px-3 rounded-2xl bg-clay-input-bg text-clay-muted font-bold text-sm text-center transition-all duration-200 group-hover:-translate-y-0.5 peer-checked:bg-clay-foreground peer-checked:text-clay-canvas peer-focus-visible:ring-4 peer-focus-visible:ring-clay-accent/30"
+          style="box-shadow: var(--shadow-clay-pressed); font-family: 'DM Sans', sans-serif;"
+        >
+          {opt.icon && <span class="text-lg" aria-hidden="true">{opt.icon}</span>}
+          <span>{opt.label}</span>
+        </div>
+      </label>
+    ))}
+  </div>
+</fieldset>

@@ -1,0 +1,293 @@
+@import 'tailwindcss';
+
+@import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/700.css';
+@import '@fontsource/nunito/800.css';
+@import '@fontsource/nunito/900.css';
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-sans/700.css';
+
+@import './tokens.css';
+
+/* ============================================================
+   THEME — Quickufficio Purple Brand
+   Palette: Purple primary + White (richiesta cliente, sostituisce
+   la palette "Hospitality Warm" originale del brief §4.1).
+   Mantenuti i nomi classi (clay-orb-copper, ecc.) per non rompere
+   componenti — ogni "tono" è una variante di viola/magenta/lavanda.
+   ============================================================ */
+
+@theme {
+  /* Canvas — bianco pulito, base del brand */
+  --color-clay-canvas:           #FFFFFF;
+  --color-clay-foreground:       #1A0F1F;   /* Near-black con tint viola */
+  --color-clay-muted:            #5C4A60;   /* Mid grigio-viola */
+
+  /* Accenti viola — ricalibrato sul brand color */
+  --color-clay-accent:           #800080;   /* Purple primary (richiesta cliente) */
+  --color-clay-accent-alt:       #5C005C;   /* Deep purple — secondary, profondità */
+  --color-clay-accent-warm:      #C04ECF;   /* Light purple/magenta — gradient light step */
+  --color-clay-accent-sage:      #A040A0;   /* Medium violet — successo, accent secondario */
+  --color-clay-accent-gold:      #D08AD0;   /* Lavanda — rating, premio, badge */
+  --color-clay-accent-terracotta:#6B005A;   /* Deep magenta */
+
+  --color-clay-card-solid:       #FFFFFF;
+  --color-clay-input-bg:         #F5EDF7;   /* Light lavender tint per input recessed */
+
+  /* Font families */
+  --font-heading: 'Nunito', -apple-system, system-ui, sans-serif;
+  --font-body:    'DM Sans', -apple-system, system-ui, sans-serif;
+  --font-sans:    'DM Sans', -apple-system, system-ui, sans-serif;
+
+  /* Shadow stack — flat-modern drop shadow puliti (no glow esterno/sfumato) */
+  --shadow-clay-surface:      0 12px 32px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-clay-card:         0 4px 14px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-clay-card-hover:   0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05);
+  --shadow-clay-button:       0 4px 12px rgba(128,0,128,0.22), 0 1px 3px rgba(128,0,128,0.10);
+  --shadow-clay-button-hover: 0 6px 16px rgba(128,0,128,0.30), 0 2px 4px rgba(128,0,128,0.14);
+  --shadow-clay-pressed:      inset 0 2px 4px rgba(0,0,0,0.10);
+
+  /* Animations */
+  --animate-clay-float:         clay-float 8s ease-in-out infinite;
+  --animate-clay-float-delayed: clay-float-delayed 10s ease-in-out infinite;
+  --animate-clay-float-slow:    clay-float-slow 12s ease-in-out infinite;
+  --animate-clay-breathe:       clay-breathe 6s ease-in-out infinite;
+}
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+
+@keyframes clay-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-20px) rotate(2deg); }
+}
+
+@keyframes clay-float-delayed {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-15px) rotate(-2deg); }
+}
+
+@keyframes clay-float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-30px) rotate(5deg); }
+}
+
+@keyframes clay-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
+}
+
+/* ============================================================
+   REVEAL ANIMATIONS — fired by IntersectionObserver (data-reveal)
+   ============================================================ */
+
+@keyframes qu-fade-up {
+  from { opacity: 0; transform: translate3d(0, 28px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes qu-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes qu-slide-left {
+  from { opacity: 0; transform: translate3d(-48px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes qu-slide-right {
+  from { opacity: 0; transform: translate3d(48px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes qu-scale-up {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes qu-blur-in {
+  from { opacity: 0; filter: blur(8px); transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; filter: blur(0); transform: translate3d(0, 0, 0); }
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-clay-canvas);
+    color: var(--color-clay-foreground);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.625;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--color-clay-foreground);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-clay-accent);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  main:target,
+  main:focus { outline: none; }
+
+  ::selection {
+    background: var(--color-clay-accent);
+    color: #FFFFFF;
+  }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+@layer utilities {
+  .animation-delay-2000 { animation-delay: 2s; }
+  .animation-delay-4000 { animation-delay: 4s; }
+  .animation-delay-6000 { animation-delay: 6s; }
+
+  /* Text gradient — dark → primary purple → lavender (solo per text-5xl+) */
+  .clay-text-gradient {
+    background: linear-gradient(to bottom right, #1A0F1F 20%, #800080 55%, #C04ECF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Glass-clay — card translucida white tinted */
+  .glass-clay {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  }
+
+  /* Gradient orb backgrounds — TUTTI varianti viola (nomi mantenuti per non rompere componenti) */
+  .clay-orb-copper      { background: linear-gradient(to bottom right, #C04ECF, #800080); }  /* primary */
+  .clay-orb-bordeaux    { background: linear-gradient(to bottom right, #A040A0, #5C005C); }  /* deep */
+  .clay-orb-sage        { background: linear-gradient(to bottom right, #B070D0, #6B289B); }  /* violet */
+  .clay-orb-gold        { background: linear-gradient(to bottom right, #E0B0E8, #B070D0); }  /* lavender */
+  .clay-orb-cream       { background: linear-gradient(to bottom right, #F0DCF0, #C04ECF); }  /* pale → mid */
+  .clay-orb-terracotta  { background: linear-gradient(to bottom right, #B040A0, #6B005A); }  /* magenta deep */
+
+  /* Button primary — light purple → primary purple */
+  .clay-button-primary {
+    background: linear-gradient(to bottom right, #C04ECF, #800080);
+  }
+
+  /* Button secondary — deep purple */
+  .clay-button-secondary {
+    background: linear-gradient(to bottom right, #A040A0, #5C005C);
+  }
+
+  /* Container */
+  .container-clay {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2rem);
+  }
+
+  /* Light purple section background — usato per alternanza bianco/viola sulla homepage */
+  .bg-clay-tint {
+    background-color: #F7F0FB;
+  }
+}
+
+/* ============================================================
+   REVEAL — initial states + classes triggered by IntersectionObserver
+   ============================================================ */
+
+[data-reveal] {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+[data-reveal].is-visible {
+  animation: qu-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+[data-reveal="fade-in"].is-visible {
+  animation: qu-fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+[data-reveal="left"].is-visible {
+  animation: qu-slide-left 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+[data-reveal="right"].is-visible {
+  animation: qu-slide-right 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+[data-reveal="scale"].is-visible {
+  animation: qu-scale-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+[data-reveal="blur"].is-visible {
+  animation: qu-blur-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger delays — applied via data-reveal-delay="100..600" */
+[data-reveal-delay="100"].is-visible { animation-delay: 0.1s; }
+[data-reveal-delay="150"].is-visible { animation-delay: 0.15s; }
+[data-reveal-delay="200"].is-visible { animation-delay: 0.2s; }
+[data-reveal-delay="300"].is-visible { animation-delay: 0.3s; }
+[data-reveal-delay="400"].is-visible { animation-delay: 0.4s; }
+[data-reveal-delay="500"].is-visible { animation-delay: 0.5s; }
+[data-reveal-delay="600"].is-visible { animation-delay: 0.6s; }
+[data-reveal-delay="700"].is-visible { animation-delay: 0.7s; }
+[data-reveal-delay="800"].is-visible { animation-delay: 0.8s; }
+
+/* Children stagger — for parent with data-reveal-stagger, children get auto delays */
+[data-reveal-stagger] > *:nth-child(1).is-visible { animation-delay: 0s; }
+[data-reveal-stagger] > *:nth-child(2).is-visible { animation-delay: 0.08s; }
+[data-reveal-stagger] > *:nth-child(3).is-visible { animation-delay: 0.16s; }
+[data-reveal-stagger] > *:nth-child(4).is-visible { animation-delay: 0.24s; }
+[data-reveal-stagger] > *:nth-child(5).is-visible { animation-delay: 0.32s; }
+[data-reveal-stagger] > *:nth-child(6).is-visible { animation-delay: 0.40s; }
+[data-reveal-stagger] > *:nth-child(7).is-visible { animation-delay: 0.48s; }
+[data-reveal-stagger] > *:nth-child(8).is-visible { animation-delay: 0.56s; }
+
+/* Card lift micro-interaction — applies via class .qu-lift on hover (oltre al -translate-y già esistente) */
+.qu-lift {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease-out;
+}
+
+/* Link underline grow animation */
+.qu-link-underline {
+  background-image: linear-gradient(var(--color-clay-accent), var(--color-clay-accent));
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.3s ease-out;
+}
+.qu-link-underline:hover {
+  background-size: 100% 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1 !important; animation: none !important; transform: none !important; }
+  .qu-link-underline { transition: none; }
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

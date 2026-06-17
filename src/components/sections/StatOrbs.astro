@@ -1,0 +1,251 @@
+---
+/**
+ * StatOrbs — riadattato in tile rettangolari animati (non più cerchi).
+ * Animazioni: count-up del numero on scroll-in, gradient stripe top in flow,
+ * floating verticale staggered, hover tilt 3D.
+ */
+interface Stat {
+  value: string;
+  label: string;
+  variant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta';
+}
+interface Props {
+  stats: Stat[];
+  columns?: 2 | 3 | 4;
+}
+
+const { stats, columns = 4 } = Astro.props;
+const colClass = {
+  2: 'grid-cols-2',
+  3: 'grid-cols-2 md:grid-cols-3',
+  4: 'grid-cols-2 md:grid-cols-4',
+}[columns];
+
+// Mapping variant → gradient stops (purple variants per brand)
+const variants = {
+  copper:     ['#C04ECF', '#800080'],
+  bordeaux:   ['#A040A0', '#5C005C'],
+  sage:       ['#B070D0', '#6B289B'],
+  gold:       ['#D08AD0', '#A040A0'],
+  cream:      ['#E0B0E8', '#B070D0'],
+  terracotta: ['#B040A0', '#6B005A'],
+} as const;
+const fallback = ['copper', 'bordeaux', 'sage', 'gold', 'cream', 'terracotta'] as const;
+---
+<section class="container-clay py-10 sm:py-14 lg:py-16">
+  <div data-reveal-stagger class={`grid ${colClass} gap-3 sm:gap-5 md:gap-6`}>
+    {stats.map((stat, i) => {
+      const variant = stat.variant ?? fallback[i % fallback.length];
+      const [light, dark] = variants[variant];
+      return (
+        <article
+          class="qu-stat-tile group relative overflow-hidden rounded-[24px] glass-clay px-4 py-5 sm:px-5 sm:py-6 md:px-6 md:py-8 flex flex-col items-center text-center"
+          style={`box-shadow: var(--shadow-clay-card); --stat-light: ${light}; --stat-dark: ${dark}; animation-delay: ${i * 0.18}s;`}
+        >
+          {/* Top accent stripe — animated gradient flow */}
+          <div class="qu-stat-stripe" aria-hidden="true"></div>
+
+          {/* Background subtle orb decorations */}
+          <div class="qu-stat-orb qu-stat-orb-a" aria-hidden="true" style={`background: radial-gradient(circle at center, ${light}40 0%, transparent 70%);`}></div>
+          <div class="qu-stat-orb qu-stat-orb-b" aria-hidden="true" style={`background: radial-gradient(circle at center, ${dark}30 0%, transparent 70%);`}></div>
+
+          {/* Big animated number */}
+          <span
+            class="qu-stat-value"
+            data-target-value={stat.value}
+            style={`background: linear-gradient(135deg, ${light}, ${dark}); -webkit-background-clip: text; background-clip: text; color: transparent;`}
+          >0</span>
+
+          {/* Label */}
+          <p class="qu-stat-label">{stat.label}</p>
+
+          {/* Bottom decoration line */}
+          <div class="qu-stat-underline" aria-hidden="true"></div>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .qu-stat-tile {
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease-out;
+    animation: qu-stat-float 7s ease-in-out infinite;
+    will-change: transform;
+  }
+  .qu-stat-tile:hover {
+    transform: translateY(-6px) rotateX(4deg);
+    box-shadow: var(--shadow-clay-card-hover);
+  }
+  .qu-stat-tile:hover .qu-stat-orb-a {
+    transform: scale(1.3) translate(-10%, -10%);
+  }
+  .qu-stat-tile:hover .qu-stat-orb-b {
+    transform: scale(1.3) translate(10%, 10%);
+  }
+  .qu-stat-tile:hover .qu-stat-underline {
+    width: 60%;
+  }
+
+  .qu-stat-stripe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--stat-light), var(--stat-dark), var(--stat-light));
+    background-size: 200% 100%;
+    animation: qu-stripe-flow 4s linear infinite;
+  }
+
+  .qu-stat-orb {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    pointer-events: none;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: blur(20px);
+    opacity: 0.7;
+  }
+  .qu-stat-orb-a { top: -30%; left: -20%; animation: qu-orb-drift-a 9s ease-in-out infinite; }
+  .qu-stat-orb-b { bottom: -30%; right: -20%; animation: qu-orb-drift-b 11s ease-in-out infinite; }
+
+  .qu-stat-value {
+    display: block;
+    font-family: Nunito, -apple-system, sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.25rem, 5.5vw, 3.25rem);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+    transform: translateZ(20px);
+    text-shadow: 0 2px 12px rgba(128, 0, 128, 0.18);
+  }
+
+  .qu-stat-label {
+    margin-top: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: var(--color-clay-foreground);
+    max-width: 16ch;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 1;
+  }
+  @media (min-width: 640px) {
+    .qu-stat-label { font-size: 0.85rem; }
+  }
+
+  .qu-stat-underline {
+    margin-top: 0.75rem;
+    height: 3px;
+    width: 32px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--stat-light), var(--stat-dark));
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes qu-stat-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+
+  @keyframes qu-stripe-flow {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes qu-orb-drift-a {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(15px, 20px); }
+  }
+  @keyframes qu-orb-drift-b {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(-15px, -20px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .qu-stat-tile,
+    .qu-stat-stripe,
+    .qu-stat-orb,
+    .qu-stat-orb-a,
+    .qu-stat-orb-b {
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  function parseStatValue(value: string): { num: number; suffix: string; prefix: string } {
+    // Supporta: "100+", "20 anni", "7/7", "100%", "1.2k", "33"
+    const match = value.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
+    if (!match) return { num: 0, suffix: value, prefix: '' };
+    return {
+      prefix: match[1] || '',
+      num: parseFloat(match[2]),
+      suffix: match[3] || '',
+    };
+  }
+
+  function animateCountUp(el: HTMLElement, finalValue: string, duration = 1800) {
+    const { num, suffix, prefix } = parseStatValue(finalValue);
+    const isInt = Number.isInteger(num);
+    const STEP = 24; // ~40fps via setInterval (più affidabile di rAF in iframe)
+    const startTime = Date.now();
+    const id = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const t = Math.min(1, elapsed / duration);
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = isInt ? Math.round(num * eased) : (num * eased).toFixed(1);
+      el.textContent = prefix + current + suffix;
+      if (t >= 1) clearInterval(id);
+    }, STEP);
+  }
+
+  function initStatCountUp() {
+    const targets = document.querySelectorAll<HTMLElement>('[data-target-value]:not([data-counted])');
+    if (typeof IntersectionObserver === 'undefined') {
+      targets.forEach((el) => {
+        el.dataset.counted = '1';
+        animateCountUp(el, el.dataset.targetValue || '');
+      });
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            if (!el.dataset.counted) {
+              el.dataset.counted = '1';
+              animateCountUp(el, el.dataset.targetValue || '');
+            }
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.3, rootMargin: '0px 0px -10% 0px' }
+    );
+    targets.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0 && !el.dataset.counted) {
+        el.dataset.counted = '1';
+        animateCountUp(el, el.dataset.targetValue || '');
+      } else {
+        observer.observe(el);
+      }
+    });
+  }
+
+  initStatCountUp();
+  document.addEventListener('astro:page-load', initStatCountUp);
+</script>

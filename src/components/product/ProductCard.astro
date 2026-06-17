@@ -1,0 +1,59 @@
+---
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  brand: string;
+  category: string;
+  image: string;
+  imageAlt: string;
+  shortDescription: string;
+  available?: boolean;
+}
+const { href, title, brand, category, image, imageAlt, shortDescription, available = true } = Astro.props;
+---
+<a
+  data-reveal
+  href={href}
+  class="group relative glass-clay rounded-[32px] overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-2"
+  style="box-shadow: var(--shadow-clay-card);"
+>
+  <div class="relative aspect-[4/3] bg-clay-card-solid p-4 overflow-hidden">
+    <div
+      class="absolute inset-4 rounded-[24px] bg-clay-canvas overflow-hidden"
+      style="box-shadow: var(--shadow-clay-pressed);"
+    >
+      <img
+        src={image}
+        alt={imageAlt}
+        class="absolute inset-0 h-full w-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+        loading="lazy"
+      />
+    </div>
+    {!available && (
+      <div class="absolute top-6 right-6">
+        <ClayBadge variant="foreground" size="sm">Su richiesta</ClayBadge>
+      </div>
+    )}
+  </div>
+  <div class="p-6 flex flex-col gap-2 flex-1">
+    <div class="flex items-center gap-2 text-xs text-clay-muted uppercase tracking-widest font-bold" style="font-family: 'DM Sans', sans-serif;">
+      <span>{brand}</span>
+      <span class="opacity-50">·</span>
+      <span>{category}</span>
+    </div>
+    <h3 class="text-lg sm:text-xl font-extrabold leading-tight tracking-tight group-hover:text-clay-accent transition-colors" style="font-family: Nunito, sans-serif;">
+      {title}
+    </h3>
+    <p class="text-sm text-clay-muted leading-relaxed font-medium flex-1" style="font-family: 'DM Sans', sans-serif;">
+      {shortDescription}
+    </p>
+    <span class="mt-2 inline-flex items-center gap-2 text-clay-accent font-bold text-sm group-hover:gap-3 transition-all" style="font-family: Nunito, sans-serif;">
+      Vedi dettagli
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </span>
+  </div>
+</a>

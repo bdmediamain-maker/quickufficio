@@ -1,0 +1,69 @@
+---
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+
+interface Props {
+  name: string;
+  business: string;
+  location: string;
+  category: string;
+  quote: string;
+  fullStory?: string;
+  image?: string;
+  imageAlt?: string;
+  results?: { label: string; value: string }[];
+}
+
+const { name, business, location, category, quote, fullStory, image, imageAlt, results } = Astro.props;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  <div
+    data-reveal="scale"
+    class="glass-clay rounded-[40px] sm:rounded-[60px] overflow-hidden grid lg:grid-cols-12"
+    style="box-shadow: var(--shadow-clay-surface);"
+  >
+    {image && (
+      <div class="lg:col-span-5 relative min-h-[280px] lg:min-h-[520px] bg-clay-input-bg">
+        <img src={image} alt={imageAlt ?? `${name}, ${business}`} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      </div>
+    )}
+    <div class={`${image ? 'lg:col-span-7' : 'lg:col-span-12'} p-6 sm:p-10 lg:p-16 flex flex-col justify-center gap-6`}>
+      <div class="flex flex-wrap items-center gap-3">
+        <ClayBadge variant="bordeaux" size="sm">Caso reale</ClayBadge>
+        <ClayBadge variant="gold" size="sm">{category}</ClayBadge>
+      </div>
+      <h2
+        class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight"
+        style="font-family: Nunito, sans-serif;"
+      >
+        {business}
+      </h2>
+      <p class="text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;">
+        {name} · {location}
+      </p>
+      <blockquote
+        class="text-xl sm:text-2xl text-clay-foreground leading-relaxed font-medium"
+        style="font-family: 'DM Sans', sans-serif;"
+      >
+        "{quote}"
+      </blockquote>
+      {fullStory && (
+        <p class="text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {fullStory}
+        </p>
+      )}
+      {results && results.length > 0 && (
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-2">
+          {results.map((r) => (
+            <div
+              class="bg-clay-card-solid rounded-2xl px-4 py-3"
+              style="box-shadow: var(--shadow-clay-card);"
+            >
+              <p class="text-2xl sm:text-3xl font-black text-clay-accent leading-none" style="font-family: Nunito, sans-serif;">{r.value}</p>
+              <p class="text-xs text-clay-muted mt-2 leading-snug" style="font-family: 'DM Sans', sans-serif;">{r.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

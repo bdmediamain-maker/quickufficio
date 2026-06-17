@@ -1,0 +1,265 @@
+---
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  business: string;
+  location: string;
+  quote: string;
+  avatar?: string;
+}
+interface Props {
+  testimonials: Testimonial[];
+  title?: string;
+  subtitle?: string;
+  /** 'slideshow' (default): un blocco unico, frecce prev/next. 'grid': tutti visibili. */
+  variant?: 'slideshow' | 'grid';
+}
+const { testimonials, title, subtitle, variant = 'slideshow' } = Astro.props;
+
+const real = testimonials.filter((t) => t.id);
+const uid = `testimonial-${Math.random().toString(36).slice(2, 9)}`;
+---
+<section class="container-clay py-10 sm:py-16 lg:py-24">
+  {(title || subtitle) && (
+    <div class="max-w-3xl mb-8 sm:mb-12 lg:mb-16">
+      {title && (
+        <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+
+  {variant === 'grid' ? (
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {real.map((t) => (
+        <article
+          class="relative glass-clay rounded-[32px] p-5 sm:p-6 lg:p-8 lg:p-10 flex flex-col gap-6"
+          style="box-shadow: var(--shadow-clay-card);"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-10 w-10 text-clay-accent/30 shrink-0" aria-hidden="true">
+            <path d="M3 17v-7c0-3 2-5 5-5v3c-1 0-2 1-2 2v1h2v6H3zm10 0v-7c0-3 2-5 5-5v3c-1 0-2 1-2 2v1h2v6h-5z"/>
+          </svg>
+          <p class="text-lg sm:text-xl text-clay-foreground leading-relaxed font-medium flex-1" style="font-family: 'DM Sans', sans-serif;">
+            "{t.quote}"
+          </p>
+          <div class="flex items-center gap-4 pt-2">
+            {t.avatar ? (
+              <div class="h-16 w-16 rounded-full overflow-hidden bg-clay-input-bg shrink-0" style="box-shadow: var(--shadow-clay-card);">
+                <img src={t.avatar} alt={`Foto di ${t.name}`} class="h-full w-full object-cover" loading="lazy" />
+              </div>
+            ) : (
+              <div class="h-16 w-16 rounded-full shrink-0 inline-flex items-center justify-center clay-orb-cream text-clay-foreground" style="box-shadow: var(--shadow-clay-card); font-family: Nunito, sans-serif;" aria-hidden="true">
+                <span class="text-2xl font-black">{t.name.charAt(0)}</span>
+              </div>
+            )}
+            <div>
+              <p class="font-extrabold text-lg leading-tight" style="font-family: Nunito, sans-serif;">{t.name}</p>
+              <p class="text-sm text-clay-muted leading-snug font-medium" style="font-family: 'DM Sans', sans-serif;">
+                {t.role} · {t.business}<br/>{t.location}
+              </p>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  ) : (
+    <div
+      data-reveal="scale"
+      class="testimonial-slideshow relative"
+      data-testimonial-slideshow
+      data-count={real.length}
+    >
+      {/* Track: tutte le slide overlayed, una sola visibile alla volta */}
+      <div class="relative">
+        {real.map((t, idx) => (
+          <article
+            class="testimonial-slide glass-clay rounded-[28px] sm:rounded-[40px] p-5 sm:p-10 lg:p-16 flex flex-col gap-4 sm:gap-6 transition-opacity duration-500"
+            style="box-shadow: var(--shadow-clay-card);"
+            data-index={idx}
+            data-active={idx === 0}
+            aria-hidden={idx === 0 ? 'false' : 'true'}
+            id={`${uid}-slide-${idx}`}
+            role="group"
+            aria-roledescription="testimonial"
+            aria-label={`Testimonianza ${idx + 1} di ${real.length}`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-12 w-12 sm:h-14 sm:w-14 text-clay-accent/30 shrink-0" aria-hidden="true">
+              <path d="M3 17v-7c0-3 2-5 5-5v3c-1 0-2 1-2 2v1h2v6H3zm10 0v-7c0-3 2-5 5-5v3c-1 0-2 1-2 2v1h2v6h-5z"/>
+            </svg>
+            <blockquote
+              class="text-base sm:text-xl md:text-2xl lg:text-3xl text-clay-foreground leading-relaxed font-medium flex-1 max-w-4xl"
+              style="font-family: 'DM Sans', sans-serif;"
+            >
+              "{t.quote}"
+            </blockquote>
+            <footer class="flex items-center gap-4 sm:gap-5 pt-2 sm:pt-4">
+              {t.avatar ? (
+                <div class="h-14 w-14 sm:h-20 sm:w-20 md:h-24 md:w-24 rounded-full overflow-hidden bg-clay-input-bg shrink-0" style="box-shadow: var(--shadow-clay-card);">
+                  <img src={t.avatar} alt={`Foto di ${t.name}`} class="h-full w-full object-cover" loading="lazy" />
+                </div>
+              ) : (
+                <div class="h-14 w-14 sm:h-20 sm:w-20 md:h-24 md:w-24 rounded-full shrink-0 inline-flex items-center justify-center clay-orb-cream text-clay-foreground" style="box-shadow: var(--shadow-clay-card); font-family: Nunito, sans-serif;" aria-hidden="true">
+                  <span class="text-2xl sm:text-3xl md:text-4xl font-black">{t.name.charAt(0)}</span>
+                </div>
+              )}
+              <div>
+                <p class="font-extrabold text-base sm:text-xl md:text-2xl leading-tight" style="font-family: Nunito, sans-serif;">{t.name}</p>
+                <p class="text-sm sm:text-base text-clay-muted leading-snug font-medium mt-1" style="font-family: 'DM Sans', sans-serif;">
+                  {t.role} · {t.business}<br/>{t.location}
+                </p>
+              </div>
+            </footer>
+          </article>
+        ))}
+      </div>
+
+      {real.length > 1 && (
+        <div class="mt-8 flex items-center justify-between gap-4">
+          {/* Dots indicator */}
+          <div class="flex items-center gap-2" role="tablist" aria-label="Seleziona testimonianza">
+            {real.map((_, idx) => (
+              <button
+                type="button"
+                class="testimonial-dot h-3 w-3 rounded-full transition-all duration-300 focus-visible:ring-4 focus-visible:ring-clay-accent/30"
+                style={idx === 0 ? 'background: var(--color-clay-accent); width: 32px; box-shadow: var(--shadow-clay-button);' : 'background: var(--color-clay-input-bg); box-shadow: var(--shadow-clay-pressed);'}
+                data-dot-index={idx}
+                role="tab"
+                aria-selected={idx === 0 ? 'true' : 'false'}
+                aria-controls={`${uid}-slide-${idx}`}
+                aria-label={`Vai alla testimonianza ${idx + 1}`}
+              ></button>
+            ))}
+          </div>
+
+          {/* Prev/next */}
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              class="testimonial-prev inline-flex h-14 w-14 items-center justify-center rounded-full glass-clay text-clay-foreground transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.92] focus-visible:ring-4 focus-visible:ring-clay-accent/30 disabled:opacity-40 disabled:hover:translate-y-0"
+              style="box-shadow: var(--shadow-clay-card);"
+              aria-label="Testimonianza precedente"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="testimonial-next inline-flex h-14 w-14 items-center justify-center rounded-full clay-button-primary text-white transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.92] focus-visible:ring-4 focus-visible:ring-clay-accent/30 disabled:opacity-40 disabled:hover:translate-y-0"
+              style="box-shadow: var(--shadow-clay-button);"
+              aria-label="Testimonianza successiva"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Counter */}
+      {real.length > 1 && (
+        <p class="mt-4 text-center text-sm text-clay-muted font-medium" style="font-family: 'DM Sans', sans-serif;" aria-live="polite">
+          <span class="testimonial-counter">1</span> / {real.length}
+        </p>
+      )}
+    </div>
+  )}
+</section>
+
+<style>
+  /* Slide overlay: tutte impilate, una sola visibile */
+  .testimonial-slideshow .relative > .testimonial-slide {
+    grid-area: 1 / 1;
+  }
+  .testimonial-slideshow > div.relative {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .testimonial-slide[data-active="false"] {
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    visibility: hidden;
+  }
+  .testimonial-slide[data-active="true"] {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+</style>
+
+<script>
+  type Direction = 1 | -1;
+
+  document.querySelectorAll<HTMLElement>('[data-testimonial-slideshow]').forEach((root) => {
+    const count = Number(root.dataset.count || 0);
+    if (count <= 1) return;
+
+    const slides = root.querySelectorAll<HTMLElement>('.testimonial-slide');
+    const dots = root.querySelectorAll<HTMLButtonElement>('.testimonial-dot');
+    const prev = root.querySelector<HTMLButtonElement>('.testimonial-prev');
+    const next = root.querySelector<HTMLButtonElement>('.testimonial-next');
+    const counter = root.querySelector<HTMLElement>('.testimonial-counter');
+    let current = 0;
+
+    const go = (idx: number) => {
+      current = ((idx % count) + count) % count;
+      slides.forEach((s, i) => {
+        const active = i === current;
+        s.dataset.active = String(active);
+        s.setAttribute('aria-hidden', String(!active));
+      });
+      dots.forEach((d, i) => {
+        const active = i === current;
+        d.setAttribute('aria-selected', String(active));
+        if (active) {
+          d.style.background = 'var(--color-clay-accent)';
+          d.style.width = '32px';
+          d.style.boxShadow = 'var(--shadow-clay-button)';
+        } else {
+          d.style.background = 'var(--color-clay-input-bg)';
+          d.style.width = '12px';
+          d.style.boxShadow = 'var(--shadow-clay-pressed)';
+        }
+      });
+      if (counter) counter.textContent = String(current + 1);
+    };
+
+    const step = (dir: Direction) => go(current + dir);
+
+    prev?.addEventListener('click', () => step(-1));
+    next?.addEventListener('click', () => step(1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+
+    // Keyboard navigation when focus is inside the slideshow
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+    });
+
+    // Swipe touch
+    let touchStartX = 0;
+    let touchStartY = 0;
+    root.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+    }, { passive: true });
+    root.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        step(dx > 0 ? -1 : 1);
+      }
+    }, { passive: true });
+  });
+</script>

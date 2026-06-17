@@ -1,0 +1,246 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import StatOrbs from '~/components/sections/StatOrbs.astro';
+import BentoFeatures from '~/components/sections/BentoFeatures.astro';
+import ModuleAccordion from '~/components/sections/ModuleAccordion.astro';
+import PricingTable from '~/components/sections/PricingTable.astro';
+import StorySection from '~/components/sections/StorySection.astro';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import IntegrationLogos from '~/components/sections/IntegrationLogos.astro';
+import BookingEmbed from '~/components/sections/BookingEmbed.astro';
+import FAQ from '~/components/sections/FAQ.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import { icons } from '~/lib/icons';
+import { getCollection } from 'astro:content';
+
+const modulesAll = await getCollection('modules', ({ data }) => data.sector === 'Hotel');
+modulesAll.sort((a, b) => a.data.order - b.data.order);
+
+const groupOrder = ['Core PMS', 'Distribuzione', 'CRM & Marketing', 'Check-in/out', 'Operations'];
+const groups = groupOrder.map((groupTitle, gi) => ({
+  title: groupTitle,
+  variant: (['bordeaux', 'copper', 'gold', 'sage', 'terracotta'] as const)[gi % 5],
+  modules: modulesAll
+    .filter((m) => m.data.group === groupTitle)
+    .map((m) => ({ title: m.data.title, description: m.data.shortDescription })),
+}));
+
+const stats = [
+  { value: '6-in-1', label: 'PMS + Channel + CRM + Booking + RT + Recovery', variant: 'bordeaux' as const },
+  { value: '-50%',   label: 'Commissioni Booking medie risparmiate',         variant: 'sage' as const },
+  { value: '33',     label: 'Anni di storia software Lasersoft',             variant: 'gold' as const },
+  { value: '< 1h',   label: 'Disaster recovery garantito',                   variant: 'copper' as const },
+];
+
+const features = [
+  {
+    title: "L'unica soluzione cloud davvero All-in-One per hotel",
+    description: 'PMS, Channel Manager, Booking Engine, CRM, Email Marketing, RT, conservazione fiscale. Tutto integrato nativamente, niente integrazioni esterne che si rompono.',
+    icon: icons.hotel,
+    iconVariant: 'bordeaux' as const,
+    image: '/images/legacy/hotel/automation-cloud.png',
+    imageAlt: 'Dashboard Hotel Automation Cloud — PMS e channel manager integrati',
+    large: true,
+  },
+  {
+    title: 'Channel manager',
+    description: 'Booking, Expedia, Airbnb sincronizzati in tempo reale. Zero overbooking, tariffe sempre allineate.',
+    icon: icons.refreshCw,
+    iconVariant: 'copper' as const,
+  },
+  {
+    title: 'Booking engine sul tuo sito',
+    description: 'Prenotazioni dirette senza commissioni OTA. Price parity smart + valore esclusivo ai diretti.',
+    icon: icons.trendingUp,
+    iconVariant: 'sage' as const,
+  },
+  {
+    title: 'Web check-in/out',
+    description: 'Check-in dal cellulare prima dell\'arrivo. Niente coda alla reception, ospite felice.',
+    icon: icons.smartphone,
+    iconVariant: 'gold' as const,
+  },
+  {
+    title: 'Compliance GDPR + RT',
+    description: 'Schede ospite digitali Questura, conservazione fiscale, consenso marketing. Pronto per ispezione.',
+    icon: icons.shield,
+    iconVariant: 'terracotta' as const,
+  },
+];
+
+const plans = [
+  {
+    name: 'Basic',
+    price: '120',
+    period: '/mese',
+    description: 'Per B&B e hotel piccoli che vogliono partire bene.',
+    features: [
+      'PMS cloud completo',
+      'Modulo RT integrato',
+      'Channel manager 3 OTA',
+      'Web check-in',
+      'GDPR Service base',
+      'Backup automatico',
+      'Assistenza 7/7 telefonica',
+    ],
+    cta: { label: 'Prenota demo', href: '/prenota-demo' },
+  },
+  {
+    name: 'Professional',
+    price: '240',
+    period: '/mese',
+    description: 'La scelta consigliata per hotel 15-40 camere.',
+    features: [
+      'Tutto del piano Basic',
+      'Channel manager illimitato',
+      'Booking engine sul sito',
+      'CRM Email Marketing',
+      'CRM Preventivi tracciati',
+      'Magazzino F&B',
+      'Worktime presenze',
+      'Sale meeting / eventi',
+    ],
+    cta: { label: 'Prenota demo', href: '/prenota-demo' },
+    highlight: true,
+    badge: 'Più richiesto',
+  },
+  {
+    name: 'Advanced',
+    price: '340',
+    period: '/mese',
+    description: 'Per hotel oltre 40 camere o catene multi-struttura.',
+    features: [
+      'Tutto del piano Professional',
+      'Multi-property',
+      'My Forecast (revenue mgmt)',
+      'Motore promo & coupon',
+      'Contabilità industriale',
+      'Centro benessere & SPA',
+      'MyEvents avanzato',
+      'Account manager dedicato',
+    ],
+    cta: { label: 'Prenota demo', href: '/prenota-demo' },
+  },
+];
+
+const otaLogos = [
+  { name: 'Booking.com', short: 'B',  color: '#003580' },
+  { name: 'Expedia',     short: 'E',  color: '#FFC72C' },
+  { name: 'Airbnb',      short: 'A',  color: '#FF5A5F' },
+  { name: 'Hotels.com',  short: 'H',  color: '#D32F2F' },
+  { name: 'Trip.com',    short: 'T',  color: '#287DFA' },
+  { name: 'HRS',         short: 'HR', color: '#0079C2' },
+];
+
+const faqItems = [
+  { question: 'Posso passare da un altro PMS senza perdere prenotazioni?', answer: "Sì. Migriamo l'archivio storico (clienti, prenotazioni, fatture) e configuriamo il channel manager prima del go-live, così il giorno X tutto è già allineato. Tipicamente facciamo lo switch di notte per evitare disservizi." },
+  { question: 'Quanto risparmio davvero sulle commissioni Booking?', answer: "Dipende dal tuo mix di canali attuali. Hotel che venivano dal 60-70% Booking arrivano al 35-45% in 12-18 mesi col booking engine + email marketing + price parity smart. Su un hotel 25 camere parliamo di 18-25.000€/anno di risparmio." },
+  { question: 'Cosa succede se il sistema cade?', answer: "Cloud Recovery garantisce ripristino in meno di 1 ora. Inoltre la cassa locale + check-in funzionano in modalità offline: continui a operare anche se la linea è giù." },
+  { question: 'È adatto a un B&B con poche camere?', answer: "Sì, esiste il piano Basic a 120€/mese pensato proprio per B&B 4-8 camere. Tutto quello che serve, niente di più." },
+  { question: 'Si integra con la mia cassa bar/ristorante?', answer: "Sì. Se hai GeRì come cassa F&B, l'addebito sulla camera è automatico. Se hai un altro sistema, lo verifichiamo in fase di sopralluogo." },
+  { question: 'Posso provarlo prima di comprare?', answer: "Sì. Demo guidata da Sergio: ti mostra il sistema reale, non un video registrato. 30-60 minuti, niente impegno." },
+];
+---
+<PageLayout
+  title="Software hotel Hotel Automation Cloud — PMS, Channel Manager, Booking Engine"
+  description="PMS cloud All-in-One per hotel italiani: prenotazioni, channel manager (Booking, Expedia, Airbnb), CRM, booking engine, RT, GDPR. Da 120€/mese. Demo gratuita con Sergio."
+  blobs="cool"
+>
+  <ClayHero
+    badge="Hotel · B&B · Resort"
+    title="L'unica soluzione cloud davvero All-in-One per hotel"
+    highlight="All-in-One"
+    subtitle="33 anni di storia Lasersoft + 3 anni di sviluppo R&D dedicato. PMS, channel manager, booking engine, CRM, RT, conservazione fiscale: tutto nativamente integrato. Niente più tre fornitori diversi."
+    primaryCta={{ label: 'Prenota demo gratuita', href: '/prenota-demo' }}
+    secondaryCta={{ label: 'Chiama 0122 675000', href: 'tel:+390122675000', variant: 'ghost' }}
+    backgroundImage="/images/hero/hotel"
+    backgroundAlt="Lobby di hotel di lusso con illuminazione elegante e dettagli architettonici curati"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="Esperienza ospite"
+    title="Ogni dettaglio, dal check-in alla recensione"
+    highlight="dal check-in"
+    paragraphs={[
+      "Hotel Automation Cloud non gestisce solo prenotazioni: orchestra l'intera esperienza ospite. Email pre-arrivo personalizzata, check-in dal cellulare, addebito automatico extra in camera, recensione richiesta al momento giusto.",
+      "Risultato: ospiti più soddisfatti, recensioni migliori, ritorni più frequenti, e meno tempo in reception a fare lavoro manuale.",
+    ]}
+    image="/images/page-cards/hotel-card"
+    imageAlt="Sala interna hotel curata con tavoli e candele, atmosfera serale"
+    imageSide="right"
+    cta={{ label: 'Scopri come funziona', href: '/prenota-demo' }}
+  />
+
+  <StatOrbs stats={stats} />
+
+  <BentoFeatures
+    title="33 anni di esperienza, cloud e All-in-One"
+    subtitle='Hotel Automation Cloud nasce dalla collaborazione con strutture italiane di tutte le dimensioni. Costruito sul software gestionale Lasersoft, storia ventennale del settore.'
+    features={features}
+  />
+
+  <ModuleAccordion
+    title="23 moduli pronti per il tuo hotel"
+    subtitle="Dal PMS base alla gestione SPA, dagli eventi alla compliance GDPR. Attivi solo i moduli che ti servono."
+    groups={groups}
+  />
+
+  <StackingCards
+    badge="3 problemi tipici"
+    title="Cosa risolviamo per il tuo hotel"
+    highlight="il tuo hotel"
+    subtitle="Tre situazioni che vediamo in tutti gli hotel italiani. Scrolla per vedere come le affrontiamo."
+    cards={[
+      {
+        title: "Riduci le commissioni Booking del 50%",
+        description: "Booking engine sul sito + channel manager sincrono + CRM post-soggiorno. Hotel 25 camere risparmia 18-25.000€/anno di commissioni in 12-18 mesi.",
+        icon: icons.trendingUp,
+        variant: 'bordeaux',
+        cta: { label: 'Vedi il caso reale', href: '/prenota-demo' },
+      },
+      {
+        title: 'Check-in dal cellulare, niente coda alla reception',
+        description: "L'ospite fa check-in prima dell'arrivo, web check-out dall'uscita, addebito automatico extra in camera. Reception libera di coccolare invece di registrare.",
+        icon: icons.smartphone,
+        variant: 'copper',
+        cta: { label: 'Demo del flusso', href: '/prenota-demo' },
+      },
+      {
+        title: "Compliance RT + GDPR + Questura sempre a posto",
+        description: "Registratore Telematico integrato, schede ospite digitali con invio Questura automatico, conservazione fiscale a norma. Una multa Garante costa 10x più del setup.",
+        icon: icons.shield,
+        variant: 'sage',
+        cta: { label: 'Verifica con noi', href: '/contatti' },
+      },
+    ]}
+  />
+
+  <PricingTable
+    title="Tre piani, scegli quello giusto per te"
+    subtitle="Il prezzo include software, aggiornamenti, assistenza 7/7 telefonica e backup giornalieri. Iva esclusa, contratto annuale con recesso 30 giorni."
+    plans={plans}
+    note="Tutti i piani includono setup, formazione iniziale in struttura e supporto continuativo. Hardware (RT, POS, serrature) preventivato a parte sulla base del sopralluogo."
+  />
+
+  <IntegrationLogos
+    title="Connettività completa col mondo OTA"
+    subtitle="Channel manager nativo con sincronizzazione in tempo reale (< 30 secondi). Zero overbooking, tariffe sempre allineate."
+    logos={otaLogos}
+  />
+
+  <BookingEmbed origin="hotel" />
+
+  <FAQ
+    title="Domande dagli albergatori"
+    items={faqItems}
+  />
+
+  <ContactForm
+    origin="hotel"
+    title="Hai un hotel? Vediamo se Hotel Automation Cloud fa per te."
+    subtitle="Mandaci dimensione struttura e qualche info sulla situazione attuale. Ti rispondo io con un'analisi gratuita."
+  />
+</PageLayout>

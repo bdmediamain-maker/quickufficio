@@ -1,0 +1,49 @@
+# Netlify deploy config — Quickufficio Astro 6
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Astro 6 build con @astrojs/netlify produce static + functions
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "11"
+  # Force install --no-frozen-lockfile in caso il lockfile abbia versioni diverse
+  NPM_FLAGS = "--version"
+
+# Static assets — cache aggressivo (1 anno) per file con hash nel nome
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML — no-cache di default per garantire freshness dei contenuti
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Redirects gestiti già in astro.config.mjs (vecchi slug Business in Cloud → nuovi)
+# Eventuali redirect aggiuntivi a runtime → Netlify Functions
+
+# Form spam protection: honeypot già implementato lato Astro nei form

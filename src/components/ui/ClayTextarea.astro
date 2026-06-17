@@ -1,0 +1,49 @@
+---
+interface Props {
+  name: string;
+  id?: string;
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  required?: boolean;
+  rows?: number;
+  hint?: string;
+  class?: string;
+}
+
+const {
+  name,
+  id = name,
+  label,
+  placeholder,
+  value,
+  required = false,
+  rows = 4,
+  hint,
+  class: className = '',
+} = Astro.props;
+---
+<div class={`flex flex-col gap-2 ${className}`}>
+  {label && (
+    <label
+      for={id}
+      class="font-medium text-sm text-clay-foreground"
+      style="font-family: 'DM Sans', sans-serif;"
+    >
+      {label}{required && <span class="text-clay-accent ml-0.5" aria-hidden="true">*</span>}
+    </label>
+  )}
+  <textarea
+    id={id}
+    name={name}
+    placeholder={placeholder}
+    required={required}
+    rows={rows}
+    aria-describedby={hint ? `${id}-hint` : undefined}
+    class="w-full px-5 py-4 rounded-2xl bg-clay-input-bg text-clay-foreground placeholder:text-clay-muted/60 font-medium focus:bg-white focus:outline-none focus:ring-4 focus:ring-clay-accent/20 transition-all duration-200 resize-none"
+    style="box-shadow: var(--shadow-clay-pressed); font-family: 'DM Sans', sans-serif;"
+  >{value}</textarea>
+  {hint && (
+    <p id={`${id}-hint`} class="text-xs text-clay-muted leading-relaxed">{hint}</p>
+  )}
+</div>

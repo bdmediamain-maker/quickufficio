@@ -1,0 +1,49 @@
+---
+interface Logo {
+  name: string;
+  /** Inline SVG or initials */
+  short?: string;
+  /** Tailwind color for the chip background */
+  color?: string;
+}
+interface Props {
+  title?: string;
+  subtitle?: string;
+  logos: Logo[];
+}
+
+const { title, subtitle, logos } = Astro.props;
+
+const colors = ['#FF6900', '#E03131', '#FF8B00', '#00945E', '#1565C0', '#7C3AED'];
+---
+<section class="container-clay py-10 sm:py-14 lg:py-16">
+  {(title || subtitle) && (
+    <div class="max-w-3xl mb-8">
+      {title && (
+        <h2 class="text-3xl sm:text-4xl font-black tracking-tight" style="font-family: Nunito, sans-serif;">{title}</h2>
+      )}
+      {subtitle && (
+        <p class="mt-3 text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">{subtitle}</p>
+      )}
+    </div>
+  )}
+
+  <div data-reveal-stagger class="flex flex-wrap gap-3 sm:gap-4">
+    {logos.map((logo, i) => (
+      <div
+        data-reveal="scale"
+        class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl glass-clay"
+        style="box-shadow: var(--shadow-clay-card);"
+      >
+        <span
+          class="inline-flex h-8 w-8 items-center justify-center rounded-full text-white text-xs font-black tracking-tight"
+          style={`background-color: ${logo.color ?? colors[i % colors.length]}; font-family: Nunito, sans-serif;`}
+          aria-hidden="true"
+        >
+          {logo.short ?? logo.name.slice(0, 2).toUpperCase()}
+        </span>
+        <span class="font-bold text-clay-foreground" style="font-family: Nunito, sans-serif;">{logo.name}</span>
+      </div>
+    ))}
+  </div>
+</section>

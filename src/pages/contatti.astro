@@ -1,0 +1,97 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ClayHero from '~/components/sections/ClayHero.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import PhotoCard from '~/components/sections/PhotoCard.astro';
+import StackingCards from '~/components/sections/StackingCards.astro';
+import MapEmbed from '~/components/sections/MapEmbed.astro';
+import { icons } from '~/lib/icons';
+
+const sentParam = Astro.url.searchParams.get('sent');
+const errorParam = Astro.url.searchParams.get('error');
+
+const banner = sentParam
+  ? { type: 'success' as const, text: 'Messaggio inviato. Ti rispondiamo entro 24h lavorative. Per urgenze: 0122 675000.' }
+  : errorParam === 'missing'
+    ? { type: 'error' as const, text: 'Compila tutti i campi richiesti.' }
+    : errorParam === 'email'
+      ? { type: 'error' as const, text: "L'email non è valida." }
+      : errorParam === 'spam'
+        ? { type: 'error' as const, text: 'Richiesta bloccata dall\'anti-spam. Riprova.' }
+        : null;
+---
+<PageLayout
+  title="Contatti — chiama, scrivi, vieni a trovarci"
+  description="Quickufficio.com Srls a Susa (TO). Telefono unico 0122 675000, email info@quickufficio.com. Lun-Ven 9-18, assistenza emergenze anche weekend."
+  blobs="warm"
+>
+  <ClayHero
+    badge="Susa · Torino"
+    title="Parla con noi. Niente call center."
+    highlight="Niente call center"
+    subtitle="Una persona vera risponde a ogni chiamata, ogni email, ogni richiesta dal form. Sergio o Emanuela ti rispondono di solito entro 24 ore lavorative — spesso molto prima."
+    backgroundImage="/images/hero/contatti"
+    backgroundAlt="Operatrice di supporto clienti con cuffie al lavoro su laptop"
+    size="md"
+  />
+
+  <PhotoCard
+    badge="Persone vere"
+    title="Quando chiami parli con chi ti conosce"
+    highlight="chi ti conosce"
+    paragraphs={[
+      "Niente ticket, niente code, niente chatbot. Quando chiami 0122 675000 risponde Emanuela o Sergio: gente che ha già il tuo file aperto e sa cosa stai facendo.",
+      "Lavoriamo così con tutti i clienti, dal B&B di 6 camere all'hotel da 50. La differenza non è il volume di clienti, è il livello di servizio.",
+    ]}
+    image="/images/page-cards/contatti-card"
+    imageAlt="Persona al telefono mentre risponde a un cliente da un ufficio luminoso"
+    imageSide="right"
+  />
+
+  {banner && (
+    <div class="container-clay py-2">
+      <div
+        class={`rounded-2xl px-5 py-4 border-2 ${banner.type === 'success' ? 'bg-clay-accent-sage/10 border-clay-accent-sage/30 text-clay-accent-sage' : 'bg-clay-accent-alt/5 border-clay-accent-alt/30 text-clay-accent-alt'}`}
+        style="font-family: 'DM Sans', sans-serif;"
+        role={banner.type === 'error' ? 'alert' : 'status'}
+      >
+        <strong>{banner.type === 'success' ? 'Grazie!' : 'Errore:'}</strong> {banner.text}
+      </div>
+    </div>
+  )}
+
+  <ContactForm origin="contatti" />
+
+  <StackingCards
+    badge="Come ti rispondiamo"
+    title="3 promesse sul nostro supporto"
+    highlight="3 promesse"
+    subtitle="Cosa puoi aspettarti quando ci scrivi o ci chiami. Scrolla per vedere le card stack."
+    cards={[
+      {
+        title: "Risposta entro 24h lavorative (di solito molto prima)",
+        description: "Email, form contatto, WhatsApp: tutti i canali finiscono nella stessa coda gestita da Emanuela. Rispondiamo in giornata se ci scrivi prima delle 14.",
+        icon: icons.clock,
+        variant: 'copper',
+      },
+      {
+        title: "Persone vere, niente bot e niente ticket persi",
+        description: "Quando chiami 0122 675000 ti risponde una persona che conosce il tuo file. Se chiami per un problema urgente, sa già con cosa lavori e cosa controllare per primo.",
+        icon: icons.headphones,
+        variant: 'sage',
+      },
+      {
+        title: "Follow-up entro 7 giorni dopo ogni interazione",
+        description: "Dopo ogni call o installazione ti richiamiamo per confermare che tutto fili. Niente ghosting post-vendita: i nostri clienti restano con noi anni proprio per questo.",
+        icon: icons.shield,
+        variant: 'bordeaux',
+        cta: { label: 'Prenota una call', href: '/prenota-demo' },
+      },
+    ]}
+  />
+
+  <MapEmbed
+    title="Quickufficio.com Srls — sede operativa"
+    address="Susa (TO) — Italia"
+  />
+</PageLayout>

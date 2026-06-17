@@ -1,0 +1,200 @@
+---
+/**
+ * StackingCards — effetto "deck of cards" su scroll.
+ * Ogni card sticky al top con offset progressivi, le successive scivolano sopra le precedenti.
+ * Su mobile (< sm) si comporta come stack verticale normale (sticky disabilitato).
+ */
+import ClayBadge from '~/components/ui/ClayBadge.astro';
+import IconOrb from '~/components/ui/IconOrb.astro';
+
+interface Card {
+  title: string;
+  description: string;
+  icon?: string;
+  variant?: 'copper' | 'bordeaux' | 'sage' | 'gold' | 'cream' | 'terracotta';
+  image?: string;
+  imageAlt?: string;
+  cta?: { label: string; href: string };
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  highlight?: string;
+  badge?: string;
+  cards: Card[];
+}
+
+const { title, subtitle, highlight, badge, cards } = Astro.props;
+const fallback = ['copper', 'bordeaux', 'sage', 'gold'] as const;
+
+const titleParts = highlight && title ? title.split(highlight) : [title];
+---
+<section class="qu-stacking-section relative container-clay py-10 sm:py-14 lg:py-20">
+  {(title || subtitle || badge) && (
+    <div class="max-w-3xl mb-10 sm:mb-16">
+      {badge && <ClayBadge variant="copper" size="md" class="mb-5">{badge}</ClayBadge>}
+      {title && (
+        <h2 data-reveal class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+          {highlight ? (
+            <>
+              {titleParts[0]}<span class="clay-text-gradient">{highlight}</span>{titleParts[1]}
+            </>
+          ) : title}
+        </h2>
+      )}
+      {subtitle && (
+        <p data-reveal data-reveal-delay="100" class="mt-4 text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+
+  <div class="qu-stacking-deck">
+    {cards.map((c, i) => {
+      const variant = c.variant ?? fallback[i % fallback.length];
+      return (
+        <article
+          class="qu-stacking-card rounded-[28px] sm:rounded-[40px] overflow-hidden flex flex-col lg:grid lg:grid-cols-12 gap-6 sm:gap-8"
+          style={`--idx: ${i}; --total: ${cards.length}; z-index: ${10 + i}; box-shadow: var(--shadow-clay-card); background-color: #FFFFFF;`}
+        >
+          <div class={`${c.image ? 'lg:col-span-7' : 'lg:col-span-12'} p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-5`}>
+            <div class="flex items-center gap-4">
+              {c.icon && (
+                <IconOrb variant={variant} size="lg" shape="rounded">
+                  <Fragment set:html={c.icon} />
+                </IconOrb>
+              )}
+              <span class="text-xs uppercase tracking-widest text-clay-muted font-bold" style="font-family: 'DM Sans', sans-serif;">
+                {String(i + 1).padStart(2, '0')} / {String(cards.length).padStart(2, '0')}
+              </span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight" style="font-family: Nunito, sans-serif;">
+              {c.title}
+            </h3>
+            <p class="text-base sm:text-lg text-clay-muted leading-relaxed font-medium" style="font-family: 'DM Sans', sans-serif;">
+              {c.description}
+            </p>
+            {c.cta && (
+              <div class="mt-2">
+                <a
+                  href={c.cta.href}
+                  class="inline-flex items-center gap-2 text-clay-accent font-bold text-sm group/cta"
+                  style="font-family: Nunito, sans-serif;"
+                >
+                  {c.cta.label}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 transition-transform duration-300 group-hover/cta:translate-x-1" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+            )}
+          </div>
+          {c.image && (
+            <div class="lg:col-span-5 relative min-h-[200px] sm:min-h-[260px] lg:min-h-[400px] bg-clay-input-bg">
+              <img src={c.image} alt={c.imageAlt ?? c.title} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            </div>
+          )}
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .qu-stacking-deck {
+    display: flex;
+    flex-direction: column;
+    /* Mobile: gap normale per stack verticale, no sticky */
+    gap: 1.5rem;
+  }
+  .qu-stacking-card {
+    /* Mobile: card normali */
+    position: relative;
+    transform-origin: top center;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (min-width: 768px) {
+    .qu-stacking-deck {
+      gap: 0;
+      /* Extra spazio finale per dare scroll-room dopo l'ultima card */
+      padding-bottom: 25vh;
+    }
+    .qu-stacking-card {
+      position: sticky;
+      /* Top offset progressivo: prima card 7rem, ognuna successiva +0.8rem.
+         Tutte le card stickano sullo stesso parent deck, quindi restano pinned
+         simultaneamente — quella sotto resta visibile dietro, quella sopra la copre. */
+      top: calc(7rem + var(--idx) * 0.8rem);
+    }
+    /* Spaziatura tra card consecutive — solo a partire dalla seconda */
+    .qu-stacking-card + .qu-stacking-card {
+      margin-top: 45vh;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .qu-stacking-card {
+      position: relative !important;
+      margin-top: 1.5rem !important;
+    }
+    .qu-stacking-deck {
+      gap: 0 !important;
+      padding-bottom: 0 !important;
+    }
+  }
+</style>
+
+<script>
+  // Scale-down effect: card pinnate sotto altre vengono scalate leggermente per dare profondità.
+  // Confronto tra card adiacenti: se la card successiva la sta coprendo, scaliamo la corrente.
+  function initStackingDepth() {
+    const decks = document.querySelectorAll<HTMLElement>('.qu-stacking-deck');
+    decks.forEach((deck) => {
+      const cards = Array.from(deck.querySelectorAll<HTMLElement>('.qu-stacking-card'));
+      if (cards.length === 0) return;
+
+      const updateScales = () => {
+        if (window.innerWidth < 768) {
+          cards.forEach((c) => {
+            c.style.transform = '';
+            c.style.opacity = '';
+          });
+          return;
+        }
+        cards.forEach((card, i) => {
+          const next = cards[i + 1];
+          // Reset prima
+          card.style.opacity = '';
+          if (!next) {
+            // Ultima card: niente scale (resta intera)
+            card.style.transform = '';
+            return;
+          }
+          const nextRect = next.getBoundingClientRect();
+          const cardRect = card.getBoundingClientRect();
+          // Distanza tra il top della card successiva e quella corrente
+          const distance = nextRect.top - cardRect.top;
+          // Quando next.top scende verso current.top, la current è "coperta" → scala
+          if (distance < window.innerHeight * 0.6) {
+            // Più sono vicine, più scaliamo (max -4%)
+            const progress = 1 - Math.max(0, distance / (window.innerHeight * 0.6));
+            const scale = 1 - progress * 0.04;
+            card.style.transform = `scale(${scale})`;
+          } else {
+            card.style.transform = '';
+          }
+        });
+      };
+
+      window.addEventListener('scroll', updateScales, { passive: true });
+      window.addEventListener('resize', updateScales);
+      updateScales();
+    });
+  }
+
+  initStackingDepth();
+  document.addEventListener('astro:page-load', initStackingDepth);
+</script>
