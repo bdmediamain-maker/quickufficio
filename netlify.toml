@@ -7,8 +7,9 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
-  # pnpm auto-detected dal pnpm-lock.yaml presente nel repo
+  # Node 22+ richiesto da pnpm 11 (usa node:sqlite built-in disponibile da v22.13)
+  NODE_VERSION = "22"
+  # pnpm version: presa da packageManager field di package.json
 
 # Static assets — cache aggressivo (1 anno) per file con hash nel nome
 [[headers]]
