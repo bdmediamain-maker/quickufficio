@@ -121,7 +121,7 @@ Il progetto è già configurato per deploy su Netlify:
 5. **Deploy** → Netlify build + pubblica
 6. **Dominio**: collega `quickufficio.com` (Site settings → Domain management)
 
-**Nota build locale Windows**: lo step finale di Netlify functions packaging usa symlink → può fallire con `EPERM` su Windows. Il `.npmrc` con `node-linker=hoisted` previene il problema. Il build su Netlify cloud (Linux) funziona senza problemi.
+**Nota build locale Windows**: lo step finale di Netlify functions packaging usa symlink → può fallire con `EPERM` su Windows. Su Netlify cloud (Linux) il build completo gira senza problemi — non serve build locale, basta push su GitHub.
 
 ## Variabili ambiente
 

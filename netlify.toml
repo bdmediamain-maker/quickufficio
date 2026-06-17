@@ -2,15 +2,13 @@
 # https://docs.netlify.com/configure-builds/file-based-configuration/
 
 [build]
-  # Astro 6 build con @astrojs/netlify produce static + functions
+  # @astrojs/netlify produce static (dist/) + Netlify Functions (.netlify/v1/functions/ssr)
   command = "pnpm build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
-  PNPM_VERSION = "11"
-  # Force install --no-frozen-lockfile in caso il lockfile abbia versioni diverse
-  NPM_FLAGS = "--version"
+  # pnpm auto-detected dal pnpm-lock.yaml presente nel repo
 
 # Static assets — cache aggressivo (1 anno) per file con hash nel nome
 [[headers]]
@@ -43,7 +41,4 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
-# Redirects gestiti già in astro.config.mjs (vecchi slug Business in Cloud → nuovi)
-# Eventuali redirect aggiuntivi a runtime → Netlify Functions
-
-# Form spam protection: honeypot già implementato lato Astro nei form
+# Redirects vecchi slug BIC: gestiti via astro.config.mjs → _redirects auto-generato
