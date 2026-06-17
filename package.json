@@ -11,7 +11,8 @@
     "astro": "astro",
     "typecheck": "astro check",
     "assets:download": "bash scripts/download-legacy-assets.sh",
-    "assets:screenshots": "tsx scripts/screenshot-legacy-pages.ts"
+    "assets:screenshots": "tsx scripts/screenshot-legacy-pages.ts",
+    "assets:optimize": "tsx scripts/optimize-page-photos.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -43,11 +44,8 @@
     "playwright": "^1.61.0",
     "tsx": "^4.22.4"
   },
-  "packageManager": "pnpm@11.7.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "esbuild"
-    ]
+  "overrides": {
+    "vite": "7.3.5",
+    "rolldown": "1.0.0-beta.51"
   }
 }

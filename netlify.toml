@@ -2,19 +2,14 @@
 # https://docs.netlify.com/configure-builds/file-based-configuration/
 
 [build]
-  # build.command runs DOPO l'auto-install di Netlify.
-  # NPM_FLAGS=--ignore-scripts (sotto) fa eseguire all'auto-install:
-  #   pnpm install --ignore-scripts
-  # Cosi salta tutti i postinstall scripts (no ERR_PNPM_IGNORED_BUILDS).
-  # Poi qui ricompiliamo solo Sharp + esbuild che ci servono per il build.
-  command = "pnpm rebuild sharp esbuild && pnpm build"
+  # Build pipeline npm — affidabile, niente strict checks come pnpm 11
+  # 1. npm install gestito da Netlify auto-install (legge package-lock.json)
+  # 2. npm run build → astro build → 40 statiche + Functions bundle
+  command = "npm run build"
   publish = "dist"
 
 [build.environment]
-  # Node 22+ richiesto da pnpm 11 (usa node:sqlite built-in disponibile da v22.13)
   NODE_VERSION = "22"
-  # Append --ignore-scripts all'install Netlify → bypassa strict CI check su build scripts
-  NPM_FLAGS = "--ignore-scripts"
 
 # Static assets — cache aggressivo (1 anno) per file con hash nel nome
 [[headers]]
