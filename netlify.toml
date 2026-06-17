@@ -2,20 +2,19 @@
 # https://docs.netlify.com/configure-builds/file-based-configuration/
 
 [build]
-  # @astrojs/netlify produce static (dist/) + Netlify Functions (.netlify/v1/functions/ssr)
-  #
-  # Override install command per bypassare il check strict di pnpm 11 sui build script
-  # ignorati (es. @parcel/watcher transitivo). Sequenza:
-  #   1. pnpm install --ignore-scripts → no postinstall, no errore
-  #   2. pnpm rebuild sharp esbuild → ricompila i 2 nativi che servono al build
-  #   3. pnpm build → astro build
-  command = "pnpm install --ignore-scripts && pnpm rebuild sharp esbuild && pnpm build"
+  # build.command runs DOPO l'auto-install di Netlify.
+  # NPM_FLAGS=--ignore-scripts (sotto) fa eseguire all'auto-install:
+  #   pnpm install --ignore-scripts
+  # Cosi salta tutti i postinstall scripts (no ERR_PNPM_IGNORED_BUILDS).
+  # Poi qui ricompiliamo solo Sharp + esbuild che ci servono per il build.
+  command = "pnpm rebuild sharp esbuild && pnpm build"
   publish = "dist"
 
 [build.environment]
   # Node 22+ richiesto da pnpm 11 (usa node:sqlite built-in disponibile da v22.13)
   NODE_VERSION = "22"
-  # pnpm version: presa da packageManager field di package.json
+  # Append --ignore-scripts all'install Netlify → bypassa strict CI check su build scripts
+  NPM_FLAGS = "--ignore-scripts"
 
 # Static assets — cache aggressivo (1 anno) per file con hash nel nome
 [[headers]]
